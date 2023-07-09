@@ -32,7 +32,7 @@ func createHttpRequest(method, url string, body io.Reader) (*http.Request, error
 	return req, err
 }
 
-func (c Client) Delete(id string) error {
+func (c DataSystemClient) Delete(id string) error {
 
 	requestURL := fmt.Sprintf("%s/api/gateway/v2/data_system/%s", c.url, id)
 	req, err := createHttpRequest(http.MethodDelete, requestURL, nil)
@@ -52,7 +52,7 @@ func (c Client) Delete(id string) error {
 	return nil
 }
 
-func (c Client) Post(dspr DataSystemPostRequest) (DataSystemPostResponse, error) {
+func (c DataSystemClient) Post(dspr DataSystemPostRequest) (DataSystemPostResponse, error) {
 	var rtn DataSystemPostResponse
 
 	b, err := json.Marshal(dspr)
@@ -87,7 +87,7 @@ func (c Client) Post(dspr DataSystemPostRequest) (DataSystemPostResponse, error)
 	return rtn, nil
 }
 
-func (c Client) Put(id string, dspr DataSystemPutRequest) (DataSystemPutResponse, error) {
+func (c DataSystemClient) Put(id string, dspr DataSystemPutRequest) (DataSystemPutResponse, error) {
 	var rtn DataSystemPutResponse
 
 	b, err := json.Marshal(dspr)
@@ -122,7 +122,7 @@ func (c Client) Put(id string, dspr DataSystemPutRequest) (DataSystemPutResponse
 	return rtn, nil
 }
 
-func (c Client) Get(hasChild bool) (DataSystemList, error) {
+func (c DataSystemClient) Get(hasChild bool) (DataSystemList, error) {
 
 	var rtn DataSystemList
 	requestURL := fmt.Sprintf("%s/api/gateway/v2/data_system?has_child=%s", c.url, boolToString(hasChild))
