@@ -1,4 +1,4 @@
-module github.com/owain-nortal/neosclient
+module github.com/owain-nortal/neos-client-go
 
 go 1.20
 
