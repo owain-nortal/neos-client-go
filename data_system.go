@@ -14,8 +14,8 @@ type DataSystemClient struct {
 	url string
 }
 
-func NewDataSystemClientV2(url string) Client {
-	return Client{url}
+func NewDataSystemClientV2(url string) DataSystemClient {
+	return DataSystemClient{url}
 }
 
 func boolToString(input bool) string {
