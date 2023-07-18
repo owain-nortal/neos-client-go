@@ -33,8 +33,6 @@ func GetAccessToken() string {
 
 var AccessToken = ""
 
-
-
 type Client struct {
 	url string
 }
@@ -92,3 +90,17 @@ func NewClient(url string) Client {
 // 	fmt.Println(sum)
 
 // }
+
+type NeosClient struct {
+	iamurl      string
+	registryurl string
+	coreurl     string
+}
+
+func NewNeosClient(iamurl string, registryurl string, coreurl string) NeosClient {
+	return NeosClient{
+		iamurl:      iamurl,
+		registryurl: registryurl,
+		coreurl:     coreurl,
+	}
+}

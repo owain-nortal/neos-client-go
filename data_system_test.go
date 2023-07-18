@@ -1,12 +1,19 @@
 package neos
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
+	//"github.com/owain-nortal/neos-client-go"
 )
+
+func createServers() {
+
+}
 
 func TestDataSystemV2PostOK(t *testing.T) {
 
@@ -19,12 +26,18 @@ func TestDataSystemV2PostOK(t *testing.T) {
 		return
 	}
 	expectedJson := string(b)
-	svr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	iamsvr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	}))
+	registrysvr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	}))
+	coresvr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		fmt.Fprint(w, expectedJson)
 	}))
 
-	defer svr.Close()
+	defer iamsvr.Close()
+	defer registrysvr.Close()
+	defer coresvr.Close()
 
 	request := DataSystemPostRequest{
 		Entity: DataSystemPostRequestEntity{
@@ -35,8 +48,8 @@ func TestDataSystemV2PostOK(t *testing.T) {
 		},
 	}
 
-	c := NewDataSystemClientV2(svr.URL)
-	res, err := c.Post(request)
+	c := NewNeosClient(iamsvr.URL, registrysvr.URL, coresvr.URL)
+	res, err := c.DataSystemPost(context.Background(), request)
 	if err != nil {
 		t.Errorf("expected err to be nil got %v", err)
 	}
@@ -57,12 +70,18 @@ func TestDataSystemV2PutOK(t *testing.T) {
 		return
 	}
 	expectedJson := string(b)
-	svr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	coresvr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		fmt.Fprint(w, expectedJson)
 	}))
+	iamsvr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	}))
+	registrysvr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	}))
 
-	defer svr.Close()
+	defer iamsvr.Close()
+	defer registrysvr.Close()
+	defer coresvr.Close()
 
 	request := DataSystemPutRequest{
 		Entity: DataSystemPutRequestEntity{
@@ -70,8 +89,8 @@ func TestDataSystemV2PutOK(t *testing.T) {
 		},
 	}
 
-	c := NewDataSystemClientV2(svr.URL)
-	res, err := c.Put("123", request)
+	c := NewNeosClient(iamsvr.URL, registrysvr.URL, coresvr.URL)
+	res, err := c.DataSystemPut(context.Background(), "123", request)
 	if err != nil {
 		t.Errorf("expected err to be nil got %v", err)
 	}
@@ -83,13 +102,19 @@ func TestDataSystemV2PutOK(t *testing.T) {
 
 func TestDataSystemV2PutFailed(t *testing.T) {
 
-	svr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	coresvr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusUnauthorized)
 	}))
-	defer svr.Close()
+	iamsvr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	}))
+	registrysvr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	}))
+	defer iamsvr.Close()
+	defer registrysvr.Close()
+	defer coresvr.Close()
 	request := DataSystemPutRequest{}
-	c := NewDataSystemClientV2(svr.URL)
-	_, err := c.Put("321ads", request)
+	c := NewNeosClient(iamsvr.URL, registrysvr.URL, coresvr.URL)
+	_, err := c.DataSystemPut(context.Background(), "321ads", request)
 	if err == nil {
 		t.Errorf("expected err to be set not nil")
 	}
@@ -97,13 +122,19 @@ func TestDataSystemV2PutFailed(t *testing.T) {
 
 func TestDataSystemV2PostFailed(t *testing.T) {
 
-	svr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	coresvr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusUnauthorized)
 	}))
-	defer svr.Close()
+	iamsvr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	}))
+	registrysvr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	}))
+	defer iamsvr.Close()
+	defer registrysvr.Close()
+	defer coresvr.Close()
 	request := DataSystemPostRequest{}
-	c := NewDataSystemClientV2(svr.URL)
-	_, err := c.Post(request)
+	c := NewNeosClient(iamsvr.URL, registrysvr.URL, coresvr.URL)
+	_, err := c.DataSystemPost(context.Background(), request)
 	if err == nil {
 		t.Errorf("expected err to be set not nil")
 	}
@@ -126,14 +157,19 @@ func TestDataSystemV2GetOK(t *testing.T) {
 		return
 	}
 	expectedJson := string(b)
-	svr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	coresvr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		fmt.Fprint(w, expectedJson)
 	}))
-
-	defer svr.Close()
-	c := NewDataSystemClientV2(svr.URL)
-	res, err := c.Get(false)
+	iamsvr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	}))
+	registrysvr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	}))
+	defer iamsvr.Close()
+	defer registrysvr.Close()
+	defer coresvr.Close()
+	c := NewNeosClient(iamsvr.URL, registrysvr.URL, coresvr.URL)
+	res, err := c.DataSystemGet()
 	if err != nil {
 		t.Errorf("expected err to be nil got %v", err)
 	}
@@ -144,40 +180,95 @@ func TestDataSystemV2GetOK(t *testing.T) {
 }
 
 func TestDataSystemV2DeleteOK(t *testing.T) {
-	svr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	coresvr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	}))
-
-	defer svr.Close()
-	c := NewDataSystemClientV2(svr.URL)
-	err := c.Delete("abc123")
+	iamsvr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	}))
+	registrysvr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	}))
+	defer iamsvr.Close()
+	defer registrysvr.Close()
+	defer coresvr.Close()
+	c := NewNeosClient(iamsvr.URL, registrysvr.URL, coresvr.URL)
+	err := c.DataSystemDelete(context.Background(), "abc123")
 	if err != nil {
 		t.Errorf("expected err to be nil got %v", err)
 	}
 }
 
 func TestDataSystemV2DeleteFailed(t *testing.T) {
-	svr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	coresvr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusUnauthorized)
 	}))
-
-	defer svr.Close()
-	c := NewDataSystemClientV2(svr.URL)
-	err := c.Delete("abc123")
+	iamsvr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	}))
+	registrysvr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	}))
+	defer iamsvr.Close()
+	defer registrysvr.Close()
+	defer coresvr.Close()
+	c := NewNeosClient(iamsvr.URL, registrysvr.URL, coresvr.URL)
+	err := c.DataSystemDelete(context.Background(), "abc123")
 	if err == nil {
 		t.Errorf("expected err to not be nil ")
 	}
 }
 
 func TestDataSystemV2GetFailed(t *testing.T) {
-	svr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	coresvr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusUnauthorized)
 	}))
-
-	defer svr.Close()
-	c := NewDataSystemClientV2(svr.URL)
-	_, err := c.Get(false)
+	iamsvr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	}))
+	registrysvr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	}))
+	defer iamsvr.Close()
+	defer registrysvr.Close()
+	defer coresvr.Close()
+	c := NewNeosClient(iamsvr.URL, registrysvr.URL, coresvr.URL)
+	_, err := c.DataSystemGet()
 	if err == nil {
 		t.Errorf("expected err to be set got nil")
+	}
+}
+
+func TestDataCreate(t *testing.T) {
+	iamClient := NewIAMClient("https://sandbox.city3os.com/api/iam", "owain.perry", "**Marley22")
+	loginReq, err := iamClient.Login()
+	if err != nil {
+		t.Errorf("expected err to be set got nil")
+	}
+
+	accessToken := loginReq.AccessToken
+
+	AccessToken = accessToken
+	coreClient := NewNeosClient("https://op-02.neosdata.net")
+
+	dspr := DataSystemPostRequest{
+		Entity: DataSystemPostRequestEntity{
+			Name:        "neos-test1",
+			Label:       "ABD",
+			Description: "Some description",
+		},
+		EntityInfo: DataSystemPostRequestEntityInfo{
+			Owner:      "some owner 123",
+			ContactIds: []string{"abc321"},
+			Links:      []string{"link 3"},
+		},
+	}
+
+	_, err = coreClient.DataSystemPost(context.Background(), dspr)
+	if err != nil {
+		t.Errorf("expected err to be set got nil")
+	}
+
+}
+
+func TestEscapce(t *testing.T) {
+	orig := "\"a\"a\"a\"a\"a\"a\"a"
+	new := strings.Replace(orig, "\"", "", -1)
+	if new != "aaaaaaa" {
+		t.Errorf("replace didnt work :(")
 	}
 }

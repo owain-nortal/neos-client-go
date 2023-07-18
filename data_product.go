@@ -14,17 +14,9 @@ import (
 	"github.com/pkg/errors"
 )
 
-// type DataSystemClientV2 struct {
-// 	url string
-// }
+func (c NeosClient) DataProductDelete(ctx context.Context, id string) error {
 
-// func NewDataSystemClientV2(url string) DataSystemClientV2 {
-// 	return DataSystemClientV2{url}
-// }
-
-func (c *NeosClient) DataSystemDelete(ctx context.Context, id string) error {
-
-	requestURL := fmt.Sprintf("%s/api/gateway/v2/data_system/%s", c.coreurl, id)
+	requestURL := fmt.Sprintf("%s/api/gateway/v2/data_product/%s", c.coreurl, id)
 	req, err := createHttpRequest(http.MethodDelete, requestURL, nil)
 	if err != nil {
 		return errors.Wrap(err, " could not create request")
@@ -42,11 +34,11 @@ func (c *NeosClient) DataSystemDelete(ctx context.Context, id string) error {
 	return nil
 }
 
-func (c *NeosClient) DataSystemPost(ctx context.Context, dspr DataSystemPostRequest) (DataSystemPostResponse, error) {
+func (c NeosClient) DataProductPost(ctx context.Context, dspr DataProductPostRequest) (DataProductPostResponse, error) {
 
-	tflog.Info(ctx, fmt.Sprintf("£##> Client Post request [%s] [%s] [%s] ", dspr.Entity.Label, dspr.Entity.Name, dspr.Entity.Description))
+	//	tflog.Info(ctx, fmt.Sprintf("£##> Client Post request [%s] [%s] [%s] ", dspr.Entity.Label, dspr.Entity.Name, dspr.Entity.Description))
 
-	var rtn DataSystemPostResponse
+	var rtn DataProductPostResponse
 
 	b, err := json.Marshal(dspr)
 	if err != nil {
@@ -55,12 +47,16 @@ func (c *NeosClient) DataSystemPost(ctx context.Context, dspr DataSystemPostRequ
 
 	unquotedString := strings.Replace(string(b), "\\\"", "", -1)
 
-	//	tflog.Info(ctx, fmt.Sprintf("£##> Client Post json [%s] ", unquotedString))
+	//os.WriteFile("/tmp/bstring", b, 0644)
+	//os.WriteFile("/tmp/raw", []byte(unquotedString), 0644)
+	//os.WriteFile("/tmp/clean", []byte(cleanString), 0644)
 
-	requestURL := fmt.Sprintf("%s/api/gateway/v2/data_system", c.coreurl)
+	tflog.Info(ctx, fmt.Sprintf("£##> Client Post json [%s] ", unquotedString))
+
+	requestURL := fmt.Sprintf("%s/api/gateway/v2/data_product", c.coreurl)
 	req, err := createHttpRequest(http.MethodPost, requestURL, bytes.NewBuffer([]byte(unquotedString)))
 
-	//	tflog.Info(ctx, fmt.Sprintf("Method %s", req.Method))
+	tflog.Info(ctx, fmt.Sprintf("Method %s", req.Method))
 	if err != nil {
 		return rtn, errors.Wrap(err, " could not create request")
 	}
@@ -80,7 +76,7 @@ func (c *NeosClient) DataSystemPost(ctx context.Context, dspr DataSystemPostRequ
 		return rtn, fmt.Errorf(" unexpected response code %d %s", res.StatusCode, byteBody)
 	}
 
-	//	tflog.Info(ctx, fmt.Sprintf("£##> Client Post result [%s] ", string(byteBody)))
+	tflog.Info(ctx, fmt.Sprintf("£##> Client Post result [%s] ", string(byteBody)))
 
 	err = json.Unmarshal(byteBody, &rtn)
 	if err != nil {
@@ -90,18 +86,18 @@ func (c *NeosClient) DataSystemPost(ctx context.Context, dspr DataSystemPostRequ
 	return rtn, nil
 }
 
-func (c *NeosClient) DataSystemPut(ctx context.Context, id string, dspr DataSystemPutRequest) (DataSystemPutResponse, error) {
-	var rtn DataSystemPutResponse
+func (c NeosClient) DataProductPut(ctx context.Context, id string, dspr DataProductPutRequest) (DataProductPutResponse, error) {
+	var rtn DataProductPutResponse
 
 	b, err := json.Marshal(dspr)
 	if err != nil {
 		return rtn, errors.Wrap(err, " could not marshal request")
 	}
 
-	requestURL := fmt.Sprintf("%s/api/gateway/v2/data_system/%s", c.coreurl, id)
+	requestURL := fmt.Sprintf("%s/api/gateway/v2/data_product/%s", c.coreurl, id)
 
-	// os.WriteFile("/tmp/put-id", []byte(id), 0644)
-	// os.WriteFile("/tmp/put-json", []byte(b), 0644)
+	os.WriteFile("/tmp/put-id", []byte(id), 0644)
+	os.WriteFile("/tmp/put-json", []byte(b), 0644)
 
 	unquotedString := strings.Replace(string(b), "\\\"", "", -1)
 
@@ -132,8 +128,8 @@ func (c *NeosClient) DataSystemPut(ctx context.Context, id string, dspr DataSyst
 	return rtn, nil
 }
 
-func (c *NeosClient) DataSystemPutInfo(ctx context.Context, id string, dspr DataSystemPutRequestEntityInfo) (DataSystemPutInfoResponse, error) {
-	var rtn DataSystemPutInfoResponse
+func (c NeosClient) DataProductPutInfo(ctx context.Context, id string, dspr DataProductPutRequestEntityInfo) (DataProductPutInfoResponse, error) {
+	var rtn DataProductPutInfoResponse
 
 	b, err := json.Marshal(dspr)
 	if err != nil {
@@ -142,8 +138,8 @@ func (c *NeosClient) DataSystemPutInfo(ctx context.Context, id string, dspr Data
 
 	requestURL := fmt.Sprintf("%s/api/gateway/v2/data_system/%s/info", c.coreurl, id)
 
-	// os.WriteFile("/tmp/put-id", []byte(id), 0644)
-	// os.WriteFile("/tmp/put-json", []byte(b), 0644)
+	os.WriteFile("/tmp/put-id", []byte(id), 0644)
+	os.WriteFile("/tmp/put-json", []byte(b), 0644)
 
 	unquotedString := strings.Replace(string(b), "\\\"", "", -1)
 
@@ -174,9 +170,9 @@ func (c *NeosClient) DataSystemPutInfo(ctx context.Context, id string, dspr Data
 	return rtn, nil
 }
 
-func (c *NeosClient) DataSystemGet() (DataSystemList, error) {
+func (c NeosClient) DataProductGet() (DataProductList, error) {
 
-	var rtn DataSystemList
+	var rtn DataProductList
 	requestURL := fmt.Sprintf("%s/api/gateway/v2/data_system", c.coreurl)
 	req, err := createHttpRequest(http.MethodGet, requestURL, nil)
 	if err != nil {

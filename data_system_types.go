@@ -60,6 +60,12 @@ type DataSystemPutRequestEntity struct {
 	Description string `json:"description"`
 }
 
+type DataSystemPutRequestEntityInfo struct {
+	Owner      string   `json:"owner"`
+	ContactIds []string `json:"contact_ids"`
+	Links      []string `json:"links"`
+}
+
 type DataSystemPutResponse struct {
 	Identifier  string    `json:"identifier"`
 	Urn         string    `json:"urn"`
@@ -68,3 +74,10 @@ type DataSystemPutResponse struct {
 	Label       string    `json:"label"`
 	CreatedAt   time.Time `json:"created_at"`
 }
+
+type DataSystemPutInfoResponse struct {
+	Owner      string   `json:"owner"`
+	ContactIds []string `json:"contact_ids"`
+	Links      []string `json:"links"`
+}
+

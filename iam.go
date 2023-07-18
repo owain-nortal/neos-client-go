@@ -45,7 +45,7 @@ func NewIAMClient(url string, username string, password string) IAMClient {
 
 func (c IAMClient) Login() (LoginResponse, error) {
 	ar := LoginResponse{}
-	url := fmt.Sprintf("%s%s", c.url, "/login")
+	url := fmt.Sprintf("https://%s%s", c.url, "/login")
 	loginJson := fmt.Sprintf("{\"user\":\"%s\",\"password\":\"%s\"}", c.username, c.password)
 	var jsonStr = []byte(loginJson)
 	req, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonStr))
