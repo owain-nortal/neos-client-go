@@ -92,15 +92,23 @@ func NewClient(url string) Client {
 // }
 
 type NeosClient struct {
-	iamurl      string
-	registryurl string
-	coreurl     string
+	iamHost      string
+	registryHost string
+	coreHost     string
+	scheme       string
+	coreUri      string
+	iamUri       string
+	registryUri  string
 }
 
-func NewNeosClient(iamurl string, registryurl string, coreurl string) NeosClient {
+func NewNeosClient(iamHost string, registryHost string, coreHost string, scheme string) NeosClient {
 	return NeosClient{
-		iamurl:      iamurl,
-		registryurl: registryurl,
-		coreurl:     coreurl,
+		iamHost:      iamHost,
+		registryHost: registryHost,
+		coreHost:     coreHost,
+		scheme:       scheme,
+		coreUri:      fmt.Sprintf("%s://%s", scheme, coreHost),
+		iamUri:       fmt.Sprintf("%s://%s", scheme, iamHost),
+		registryUri:  fmt.Sprintf("%s://%s", scheme, registryHost),
 	}
 }

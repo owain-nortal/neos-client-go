@@ -16,7 +16,7 @@ import (
 
 func (c NeosClient) DataProductDelete(ctx context.Context, id string) error {
 
-	requestURL := fmt.Sprintf("%s/api/gateway/v2/data_product/%s", c.coreurl, id)
+	requestURL := fmt.Sprintf("%s%s/api/gateway/v2/data_product/%s", c.coreUri, id)
 	req, err := createHttpRequest(http.MethodDelete, requestURL, nil)
 	if err != nil {
 		return errors.Wrap(err, " could not create request")
@@ -53,7 +53,7 @@ func (c NeosClient) DataProductPost(ctx context.Context, dspr DataProductPostReq
 
 	tflog.Info(ctx, fmt.Sprintf("£##> Client Post json [%s] ", unquotedString))
 
-	requestURL := fmt.Sprintf("%s/api/gateway/v2/data_product", c.coreurl)
+	requestURL := fmt.Sprintf("%s/api/gateway/v2/data_product", c.coreUri)
 	req, err := createHttpRequest(http.MethodPost, requestURL, bytes.NewBuffer([]byte(unquotedString)))
 
 	tflog.Info(ctx, fmt.Sprintf("Method %s", req.Method))
@@ -94,7 +94,7 @@ func (c NeosClient) DataProductPut(ctx context.Context, id string, dspr DataProd
 		return rtn, errors.Wrap(err, " could not marshal request")
 	}
 
-	requestURL := fmt.Sprintf("%s/api/gateway/v2/data_product/%s", c.coreurl, id)
+	requestURL := fmt.Sprintf("%s/api/gateway/v2/data_product/%s", c.coreUri, id)
 
 	os.WriteFile("/tmp/put-id", []byte(id), 0644)
 	os.WriteFile("/tmp/put-json", []byte(b), 0644)
@@ -136,7 +136,7 @@ func (c NeosClient) DataProductPutInfo(ctx context.Context, id string, dspr Data
 		return rtn, errors.Wrap(err, " could not marshal request")
 	}
 
-	requestURL := fmt.Sprintf("%s/api/gateway/v2/data_system/%s/info", c.coreurl, id)
+	requestURL := fmt.Sprintf("%s/api/gateway/v2/data_system/%s/info", c.coreUri, id)
 
 	os.WriteFile("/tmp/put-id", []byte(id), 0644)
 	os.WriteFile("/tmp/put-json", []byte(b), 0644)
@@ -173,7 +173,7 @@ func (c NeosClient) DataProductPutInfo(ctx context.Context, id string, dspr Data
 func (c NeosClient) DataProductGet() (DataProductList, error) {
 
 	var rtn DataProductList
-	requestURL := fmt.Sprintf("%s/api/gateway/v2/data_system", c.coreurl)
+	requestURL := fmt.Sprintf("%s/api/gateway/v2/data_system", c.coreUri)
 	req, err := createHttpRequest(http.MethodGet, requestURL, nil)
 	if err != nil {
 		return rtn, errors.Wrap(err, " could not create request")

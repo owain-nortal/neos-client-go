@@ -25,7 +25,7 @@ func (c *NeosClient) RegistryCoreDelete(ctx context.Context, rcdr RegistryCoreDe
 
 	tflog.Info(ctx, fmt.Sprintf("£##> Client Post json [%s] ", unquotedString))
 
-	requestURL := fmt.Sprintf("https://%s/api/registry/core", c.registryurl)
+	requestURL := fmt.Sprintf("%s/api/registry/core", c.registryUri)
 	req, err := createHttpRequest(http.MethodDelete, requestURL, bytes.NewBuffer([]byte(unquotedString)))
 	tflog.Info(ctx, fmt.Sprintf("Method %s", req.Method))
 	if err != nil {
@@ -59,7 +59,7 @@ func (c *NeosClient) RegistryCorePost(ctx context.Context, dspr RegistryCorePost
 
 	tflog.Info(ctx, fmt.Sprintf("£##> Client Post json [%s] ", unquotedString))
 
-	requestURL := fmt.Sprintf("https://%s/api/registry/core", c.registryurl)
+	requestURL := fmt.Sprintf("%s/api/registry/core", c.registryUri)
 	req, err := createHttpRequest(http.MethodPost, requestURL, bytes.NewBuffer([]byte(unquotedString)))
 
 	tflog.Info(ctx, fmt.Sprintf("Method %s", req.Method))
@@ -95,7 +95,7 @@ func (c *NeosClient) RegistryCorePost(ctx context.Context, dspr RegistryCorePost
 func (c *NeosClient) RegistryCoreGet() (RegistryCoreList, error) {
 
 	var rtn RegistryCoreList
-	requestURL := fmt.Sprintf("https://%s/api/registry/core", c.registryurl)
+	requestURL := fmt.Sprintf("%s/api/registry/core", c.registryUri)
 	req, err := createHttpRequest(http.MethodGet, requestURL, nil)
 	if err != nil {
 		return rtn, errors.Wrap(err, " could not create request")
