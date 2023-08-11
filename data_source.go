@@ -13,9 +13,9 @@ import (
 	"github.com/pkg/errors"
 )
 
-func (c *NeosClient) DataSystemDelete(ctx context.Context, id string) error {
+func (c *NeosClient) DataSourceDelete(ctx context.Context, id string) error {
 
-	requestURL := fmt.Sprintf("%s/api/gateway/v2/data_system/%s", c.coreUri, id)
+	requestURL := fmt.Sprintf("%s/api/gateway/v2/data_source/%s", c.coreUri, id)
 	req, err := createHttpRequest(http.MethodDelete, requestURL, nil)
 	if err != nil {
 		return errors.Wrap(err, " could not create request")
@@ -33,11 +33,11 @@ func (c *NeosClient) DataSystemDelete(ctx context.Context, id string) error {
 	return nil
 }
 
-func (c *NeosClient) DataSystemPost(ctx context.Context, dspr DataSystemPostRequest) (DataSystemPostResponse, error) {
+func (c *NeosClient) DataSourcePost(ctx context.Context, dspr DataSourcePostRequest) (DataSourcePostResponse, error) {
 
-	tflog.Info(ctx, fmt.Sprintf("£##> Client Post request [%s] [%s] [%s] ", dspr.Entity.Label, dspr.Entity.Name, dspr.Entity.Description))
+	tflog.Info(ctx, fmt.Sprintf("DataSourcePost request [%s] [%s] [%s] ", dspr.Entity.Label, dspr.Entity.Name, dspr.Entity.Description))
 
-	var rtn DataSystemPostResponse
+	var rtn DataSourcePostResponse
 
 	b, err := json.Marshal(dspr)
 	if err != nil {
@@ -48,7 +48,7 @@ func (c *NeosClient) DataSystemPost(ctx context.Context, dspr DataSystemPostRequ
 
 	//	tflog.Info(ctx, fmt.Sprintf("£##> Client Post json [%s] ", unquotedString))
 
-	requestURL := fmt.Sprintf("%s/api/gateway/v2/data_system", c.coreUri)
+	requestURL := fmt.Sprintf("%s/api/gateway/v2/data_source", c.coreUri)
 	req, err := createHttpRequest(http.MethodPost, requestURL, bytes.NewBuffer([]byte(unquotedString)))
 
 	//	tflog.Info(ctx, fmt.Sprintf("Method %s", req.Method))
@@ -81,15 +81,15 @@ func (c *NeosClient) DataSystemPost(ctx context.Context, dspr DataSystemPostRequ
 	return rtn, nil
 }
 
-func (c *NeosClient) DataSystemPut(ctx context.Context, id string, dspr DataSystemPutRequest) (DataSystemPutResponse, error) {
-	var rtn DataSystemPutResponse
+func (c *NeosClient) DataSourcePut(ctx context.Context, id string, dspr DataSourcePutRequest) (DataSourcePutResponse, error) {
+	var rtn DataSourcePutResponse
 
 	b, err := json.Marshal(dspr)
 	if err != nil {
 		return rtn, errors.Wrap(err, " could not marshal request")
 	}
 
-	requestURL := fmt.Sprintf("%s/api/gateway/v2/data_system/%s", c.coreUri, id)
+	requestURL := fmt.Sprintf("%s/api/gateway/v2/data_source/%s", c.coreUri, id)
 
 	unquotedString := strings.Replace(string(b), "\\\"", "", -1)
 
@@ -120,16 +120,15 @@ func (c *NeosClient) DataSystemPut(ctx context.Context, id string, dspr DataSyst
 	return rtn, nil
 }
 
-func (c *NeosClient) DataSystemPutInfo(ctx context.Context, id string, dspr DataSystemPutRequestEntityInfo) (DataSystemPutInfoResponse, error) {
-	var rtn DataSystemPutInfoResponse
+func (c *NeosClient) DataSourcePutInfo(ctx context.Context, id string, dspr DataSourcePutRequestEntityInfo) (DataSourcePutInfoResponse, error) {
+	var rtn DataSourcePutInfoResponse
 
 	b, err := json.Marshal(dspr)
 	if err != nil {
 		return rtn, errors.Wrap(err, " could not marshal request")
 	}
 
-	requestURL := fmt.Sprintf("%s/api/gateway/v2/data_system/%s/info", c.coreUri, id)
-
+	requestURL := fmt.Sprintf("%s/api/gateway/v2/data_source/%s/info", c.coreUri, id)
 	unquotedString := strings.Replace(string(b), "\\\"", "", -1)
 
 	req, err := createHttpRequest(http.MethodPut, requestURL, bytes.NewBuffer([]byte(unquotedString)))
@@ -159,10 +158,10 @@ func (c *NeosClient) DataSystemPutInfo(ctx context.Context, id string, dspr Data
 	return rtn, nil
 }
 
-func (c *NeosClient) DataSystemGet() (DataSystemList, error) {
+func (c *NeosClient) DataSourceGet() (DataSourceList, error) {
 
-	var rtn DataSystemList
-	requestURL := fmt.Sprintf("%s/api/gateway/v2/data_system", c.coreUri)
+	var rtn DataSourceList
+	requestURL := fmt.Sprintf("%s/api/gateway/v2/data_source", c.coreUri)
 	req, err := createHttpRequest(http.MethodGet, requestURL, nil)
 	if err != nil {
 		return rtn, errors.Wrap(err, " could not create request")

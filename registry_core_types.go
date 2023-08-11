@@ -3,9 +3,10 @@ package neos
 import ()
 
 type RegistryCore struct {
-	Host string `json:"host"`
-	Urn  string `json:"urn"`
-	Name string `json:"name"`
+	ID        string `json:"id"`
+	Host      string `json:"host"`
+	Urn       string `json:"urn"`
+	Name      string `json:"name"`
 	AccessKey string `json:"access_key"`
 }
 
@@ -19,9 +20,8 @@ type RegistryCorePostRequest struct {
 }
 
 type RegistryCoreDeleteRequest struct {
-	Urn      string `json:"urn"`
+	Urn string `json:"urn"`
 }
-
 
 type RegistryCorePostResponse struct {
 	Identifier string `json:"identifier"`

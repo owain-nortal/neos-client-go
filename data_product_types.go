@@ -80,3 +80,62 @@ type DataProductPutInfoResponse struct {
 	ContactIds []string `json:"contact_ids"`
 	Links      []string `json:"links"`
 }
+
+type DataProductSchema struct {
+	Fields []DataProductSchemaField `json:"fields"`
+}
+
+type DataProductSchemaField struct {
+	Name        string                    `json:"name"`
+	Description string                    `json:"description"`
+	Primary     bool                      `json:"primary"`
+	Optional    bool                      `json:"optional"`
+	DataType    DataProductSchemaDataType `json:"data_type"`
+	//Tags        []string                  `json:"tags"`
+}
+
+type DataProductSchemaDataType struct {
+	Meta       map[string]string `json:"meta"`
+	ColumnType string            `json:"column_type"`
+}
+
+type DataProductSchemaPutRequest struct {
+	Details DataProductSchemaDetailsPutRequest `json:"details"`
+}
+
+type DataProductSchemaDetailsPutRequest struct {
+	ProductType string                             `json:"product_type"`
+	Fields      []DataProductSchemaFieldPutRequest `json:"fields"`
+}
+
+type DataProductSchemaFieldPutRequest struct {
+	Description string                              `json:"description"`
+	Name        string                              `json:"name"`
+	Primary     bool                                `json:"primary"`
+	Optional    bool                                `json:"optional"`
+	DataType    DataProductSchemaDataTypePutRequest `json:"data_type"`
+	//Type        string                              `json:"type"`
+	//Tags        []string                            `json:"tags"`
+}
+
+type DataProductSchemaDataTypePutRequest struct {
+	Meta       map[string]string `json:"meta"`
+	ColumnType string            `json:"column_type"`
+}
+
+type DataProductSchemaPutResponse struct {
+	Fields []struct {
+		//Type        string `json:"type"`
+		Name        string `json:"name"`
+		Description string `json:"description"`
+		Primary     bool   `json:"primary"`
+		Optional    bool   `json:"optional"`
+		DataType    struct {
+			Meta       map[string]string `json:"meta"`
+			ColumnType string            `json:"column_type"`
+		} `json:"data_type"`
+		//Tags []string `json:"tags"`
+	} `json:"fields"`
+}
+
+type DataProductBuilderPutResponse struct {}
