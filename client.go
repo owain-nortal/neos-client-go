@@ -2,6 +2,7 @@ package neos
 
 import (
 	"fmt"
+	"net/url"
 	"time"
 )
 
@@ -101,14 +102,46 @@ type NeosClient struct {
 	registryUri  string
 }
 
-func NewNeosClient(iamHost string, registryHost string, coreHost string, scheme string) NeosClient {
-	return NeosClient{
+func NewNeosClient(iamHost string, registryHost string, coreHost string, scheme string) (NeosClient, error) {
+	var rtn NeosClient
+
+	coreUri, err := resolveUri(coreHost, scheme)
+	if err != nil {
+		return rtn, err
+	}
+
+	iamUri, err := resolveUri(iamHost, scheme)
+	if err != nil {
+		return rtn, err
+	}
+
+	registryUri, err := resolveUri(registryHost, scheme)
+	if err != nil {
+		return rtn, err
+	}
+
+	rtn = NeosClient{
 		iamHost:      iamHost,
 		registryHost: registryHost,
 		coreHost:     coreHost,
 		scheme:       scheme,
-		coreUri:      fmt.Sprintf("%s://%s", scheme, coreHost),
-		iamUri:       fmt.Sprintf("%s://%s", scheme, iamHost),
-		registryUri:  fmt.Sprintf("%s://%s", scheme, registryHost),
+
+		coreUri:     coreUri,
+		iamUri:      iamUri,
+		registryUri: registryUri,
 	}
+	return rtn, nil
+}
+
+func resolveUri(host string, scheme string) (string, error) {
+	coreHostUri, err := url.Parse(host)
+	if err != nil {
+		return "", err
+	}
+
+	coreUri := fmt.Sprintf("%s://%s", scheme, host)
+	if coreHostUri.Scheme != "" {
+		coreUri = host
+	}
+	return coreUri, nil
 }

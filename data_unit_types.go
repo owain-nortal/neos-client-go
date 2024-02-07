@@ -177,3 +177,63 @@ type DataUnitConfigurationDataProductConfigPutResponse struct {
 	Engine       string `json:"engine"`
 	Table        string `json:"table"`
 }
+
+
+
+
+
+
+
+type DataUnitConfigurationCSVGetResponse struct {
+	Configuration DataUnitConfigurationCSVConfigGetResponse `json:"configuration"`
+}
+
+type DataUnitConfigurationCSVConfigGetResponse struct {
+	DateUnitType string `json:"data_unit_type"`
+	Delimiter    string `json:"delimiter"`
+	Path         string `json:"path"`
+	HasHeader    bool   `json:"has_header"`
+	QuoteChar    string `json:"quote_char"`
+	EscapeChar   string `json:"escape_char"`
+}
+
+type DataUnitConfigurationParquetGetResponse struct {
+	Configuration DataUnitConfigurationParquetConfigGetResponse `json:"configuration"`
+}
+
+type DataUnitConfigurationParquetConfigGetResponse struct {
+	DateUnitType string `json:"data_unit_type"`
+}
+
+type DataUnitConfigurationTableGetResponse struct {
+	Configuration DataUnitConfigurationTableConfigGetResponse `json:"configuration"`
+}
+
+type DataUnitConfigurationTableConfigGetResponse struct {
+	DateUnitType string `json:"data_unit_type"`
+	Table        string `json:"table"`
+}
+
+type DataUnitConfigurationQueryGetResponse struct {
+	Configuration DataUnitConfigurationQueryConfigGetResponse `json:"configuration"`
+}
+
+type DataUnitConfigurationQueryConfigGetResponse struct {
+	DateUnitType string `json:"data_unit_type"`
+	Query        string `json:"query"`
+}
+
+type DataUnitConfigurationDataProductGetResponse struct {
+	Configuration DataUnitConfigurationDataProductConfigGetResponse `json:"configuration"`
+}
+
+type DataUnitConfigurationDataProductConfigGetResponse struct {
+	DateUnitType string `json:"data_unit_type"`
+	Engine       string `json:"engine"`
+	Table        string `json:"table"`
+}
+
+
+type DataUnitConfigurationDataUnitTypeOnlyConfigGetResponse struct {
+	DateUnitType string `json:"data_unit_type"`
+}
