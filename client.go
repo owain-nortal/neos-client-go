@@ -101,16 +101,26 @@ func NewClient(url string) Client {
 // }
 
 type NeosClient struct {
-	iamHost      string
-	registryHost string
-	coreHost     string
-	scheme       string
-	coreUri      string
-	iamUri       string
-	registryUri  string
+	hubHost            string
+	coreHost           string
+	scheme             string
+	coreUri            string
+	AccountClient      AccountClient
+	DataProductClient  DataProductClient
+	DataSourceClient   DataSourceClient
+	DataSystemClient   DataSystemClient
+	DataUnitClient     DataUnitClient
+	GroupClient        GroupClient
+	IAMClient          IAMClient
+	LinksClient        LinksClient
+	OutputClient       OutputClient
+	PolicyClient       PolicyClient
+	RegistryCoreClient RegistryCoreClient
+	SecretClient       SecretClient
+	UserClient         UserClient
 }
 
-func NewNeosClient(iamHost string, registryHost string, coreHost string, scheme string) (NeosClient, error) {
+func NewNeosClient(hubHost, coreHost string, scheme string, account string, partition string) (NeosClient, error) {
 	var rtn NeosClient
 
 	coreUri, err := resolveUri(coreHost, scheme)
@@ -118,25 +128,30 @@ func NewNeosClient(iamHost string, registryHost string, coreHost string, scheme 
 		return rtn, err
 	}
 
-	iamUri, err := resolveUri(iamHost, scheme)
+	hubUri, err := resolveUri(hubHost, scheme)
 	if err != nil {
 		return rtn, err
 	}
 
-	registryUri, err := resolveUri(registryHost, scheme)
-	if err != nil {
-		return rtn, err
-	}
+	httpClient := NewNeosHttp(account, partition)
 
 	rtn = NeosClient{
-		iamHost:      iamHost,
-		registryHost: registryHost,
-		coreHost:     coreHost,
-		scheme:       scheme,
-
-		coreUri:     coreUri,
-		iamUri:      iamUri,
-		registryUri: registryUri,
+		hubHost:            hubHost,
+		coreHost:           coreHost,
+		scheme:             scheme,
+		coreUri:            coreUri,
+		AccountClient:      *NewAccountClient(hubUri, httpClient),
+		DataProductClient:  *NewDataProductClient(coreUri, httpClient),
+		DataSourceClient:   *NewDataSourceClient(coreUri, httpClient),
+		DataSystemClient:   *NewDataSystemClient(coreUri, httpClient),
+		DataUnitClient:     *NewDataUnitClient(coreUri, httpClient),
+		GroupClient:        *NewGroupClient(hubUri, httpClient),
+		LinksClient:        *NewLinksClient(coreUri, httpClient),
+		OutputClient:       *NewOutputClient(coreUri, httpClient),
+		PolicyClient:       *NewPolicyClient(hubUri, httpClient),
+		RegistryCoreClient: *NewRegistryCoreClient(hubUri, httpClient),
+		SecretClient:       *NewSecretClient(coreUri, httpClient),
+		UserClient:         *NewUserClient(hubUri, httpClient),
 	}
 	return rtn, nil
 }

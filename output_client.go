@@ -12,8 +12,8 @@ type OutputClient struct {
 	http    *NeosHttp
 }
 
-func NewOutputClient(coreUri string, http *NeosHttp) *DataSystemClient {
-	return &DataSystemClient{
+func NewOutputClient(coreUri string, http *NeosHttp) *OutputClient {
+	return &OutputClient{
 		coreUri: coreUri,
 		http:    http,
 	}
