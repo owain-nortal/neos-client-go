@@ -8,24 +8,32 @@ import (
 
 func MaintainAccessToken(iamUrl string, username string, password string) {
 	nextLoginTime := time.Now()
-	iam := NewIAMClient(iamUrl, username, password)
+
 	for {
 		if time.Now().After(nextLoginTime) {
-			loginResult, err := iam.Login()
-			if err != nil {
-				fmt.Println(err)
-			}
-			AccessToken = loginResult.AccessToken
-			expires, err := loginResult.TokenExpires()
-			if err != nil {
-				fmt.Println(err)
-			} else {
-				nextLoginTime = time.Now().Add(expires)
-			}
+			nextLoginTime = LoginToGetToken(iamUrl, username, password)
 			time.Sleep(time.Second)
 		}
 	}
 
+}
+
+func LoginToGetToken(iamUrl string, username string, password string) time.Time {
+	var nextLoginTime time.Time
+	iam := NewIAMClient(iamUrl, username, password)
+	loginResult, err := iam.Login()
+	if err != nil {
+		fmt.Println(err)
+	}
+	AccessToken = loginResult.AccessToken
+	expires, err := loginResult.TokenExpires()
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		nextLoginTime = time.Now().Add(expires)
+	}
+
+	return nextLoginTime
 }
 
 func GetAccessToken() string {

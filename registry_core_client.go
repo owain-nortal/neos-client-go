@@ -30,14 +30,14 @@ func (c *RegistryCoreClient) Delete(ctx context.Context, rcdr RegistryCoreDelete
 
 func (c *RegistryCoreClient) Post(ctx context.Context, dspr RegistryCorePostRequest) (RegistryCorePostResponse, error) {
 	var rtn RegistryCorePostResponse
-	requestURL := fmt.Sprintf("%s/api/registry/core", c.registryUri)
+	requestURL := fmt.Sprintf("%s/api/hub/registry/core", c.registryUri)
 	err := c.http.PostUnmarshal(requestURL, dspr, http.StatusOK, &rtn)
 	return rtn, err
 }
 
-func (c *RegistryCoreClient) RegistryCoreGet() (RegistryCoreList, error) {
+func (c *RegistryCoreClient) Get() (RegistryCoreList, error) {
 	var rtn RegistryCoreList
-	requestURL := fmt.Sprintf("%s/api/registry/core", c.registryUri)
+	requestURL := fmt.Sprintf("%s/api/hub/registry/core", c.registryUri)
 	err := c.http.GetUnmarshal(requestURL, http.StatusOK, &rtn)
 	return rtn, err
 }

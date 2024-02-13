@@ -3,7 +3,6 @@ package neos
 import (
 	"bytes"
 	"context"
-	//"encoding/json"
 	"fmt"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/pkg/errors"

@@ -1,13 +1,12 @@
 package neos
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
-	"time"
-	"bytes"
 	"io"
-	"net/http"
-	"strconv"
+	"net/http"	
+	"time"
 )
 
 type IAMClient struct {
@@ -19,17 +18,18 @@ type IAMClient struct {
 type LoginResponse struct {
 	AccessToken      string `json:"access_token"`
 	RefreshToken     string `json:"refresh_token"`
-	ExpiresIn        string `json:"expires_in"`
-	RefreshExpiresIn string `json:"refresh_expires_in"`
+	ExpiresIn        int    `json:"expires_in"`
+	RefreshExpiresIn int    `json:"refresh_expires_in"`
 	Scope            string `json:"scope"`
 	TokenType        string `json:"token_type"`
 	SessionState     string `json:"session_state"`
 }
 
 func (l *LoginResponse) TokenExpires() (time.Duration, error) {
-	expiresTotal , err := strconv.Atoi(l.ExpiresIn)
-	// refresh in half the time 
-	expires := expiresTotal / 2 
+	//expiresTotal , err := strconv.Atoi(l.ExpiresIn)
+	// refresh in half the time
+	var err error
+	expires := l.ExpiresIn / 2
 	rtn := time.Duration(expires) * time.Second
 	return rtn, err
 }
