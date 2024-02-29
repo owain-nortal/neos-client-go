@@ -2,29 +2,38 @@ package neos
 
 import (
 	"fmt"
+	"net/url"
 	"time"
 )
 
 func MaintainAccessToken(iamUrl string, username string, password string) {
 	nextLoginTime := time.Now()
-	iam := NewIAMClient(iamUrl, username, password)
+
 	for {
 		if time.Now().After(nextLoginTime) {
-			loginResult, err := iam.Login()
-			if err != nil {
-				fmt.Println(err)
-			}
-			AccessToken = loginResult.AccessToken
-			expires, err := loginResult.TokenExpires()
-			if err != nil {
-				fmt.Println(err)
-			} else {
-				nextLoginTime = time.Now().Add(expires)
-			}
+			nextLoginTime = LoginToGetToken(iamUrl, username, password)
 			time.Sleep(time.Second)
 		}
 	}
 
+}
+
+func LoginToGetToken(iamUrl string, username string, password string) time.Time {
+	var nextLoginTime time.Time
+	iam := NewIAMClient(iamUrl, username, password)
+	loginResult, err := iam.Login()
+	if err != nil {
+		fmt.Println(err)
+	}
+	AccessToken = loginResult.AccessToken
+	expires, err := loginResult.TokenExpires()
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		nextLoginTime = time.Now().Add(expires)
+	}
+
+	return nextLoginTime
 }
 
 func GetAccessToken() string {
@@ -92,23 +101,76 @@ func NewClient(url string) Client {
 // }
 
 type NeosClient struct {
-	iamHost      string
-	registryHost string
-	coreHost     string
-	scheme       string
-	coreUri      string
-	iamUri       string
-	registryUri  string
+	hubHost                    string
+	coreHost                   string
+	scheme                     string
+	coreUri                    string
+	AccountClient              AccountClient
+	DataProductClient          DataProductClient
+	DataSourceClient           DataSourceClient
+	DataSourceConnectionClient DataSourceConnectionClient
+	DataSourceSecretClient     DataSourceSecretClient
+	DataSystemClient           DataSystemClient
+	DataProductSchemaClient    DataProductSchemaClient
+	DataUnitClient             DataUnitClient
+	GroupClient                GroupClient
+	IAMClient                  IAMClient
+	LinksClient                LinksClient
+	OutputClient               OutputClient
+	PolicyClient               PolicyClient
+	RegistryCoreClient         RegistryCoreClient
+	SecretClient               SecretClient
+	UserClient                 UserClient
 }
 
-func NewNeosClient(iamHost string, registryHost string, coreHost string, scheme string) NeosClient {
-	return NeosClient{
-		iamHost:      iamHost,
-		registryHost: registryHost,
-		coreHost:     coreHost,
-		scheme:       scheme,
-		coreUri:      fmt.Sprintf("%s://%s", scheme, coreHost),
-		iamUri:       fmt.Sprintf("%s://%s", scheme, iamHost),
-		registryUri:  fmt.Sprintf("%s://%s", scheme, registryHost),
+func NewNeosClient(hubHost, coreHost string, scheme string, account string, partition string) (NeosClient, error) {
+	var rtn NeosClient
+
+	coreUri, err := resolveUri(coreHost, scheme)
+	if err != nil {
+		return rtn, err
 	}
+
+	hubUri, err := resolveUri(hubHost, scheme)
+	if err != nil {
+		return rtn, err
+	}
+
+	httpClient := NewNeosHttp(account, partition)
+
+	rtn = NeosClient{
+		hubHost:                    hubHost,
+		coreHost:                   coreHost,
+		scheme:                     scheme,
+		coreUri:                    coreUri,
+		AccountClient:              *NewAccountClient(hubUri, httpClient, account),
+		DataProductClient:          *NewDataProductClient(coreUri, httpClient, account),
+		DataSourceClient:           *NewDataSourceClient(coreUri, httpClient, account),
+		DataSourceConnectionClient: *NewDataSourceConnectionClient(coreUri, httpClient, account),
+		DataSourceSecretClient:     *NewDataSourceSecretClient(coreUri, httpClient, account),
+		DataSystemClient:           *NewDataSystemClient(coreUri, httpClient, account),
+		DataProductSchemaClient:    *NewDataProductSchemaClient(coreUri, httpClient, account),
+		DataUnitClient:             *NewDataUnitClient(coreUri, httpClient, account),
+		GroupClient:                *NewGroupClient(hubUri, httpClient, account),
+		LinksClient:                *NewLinksClient(coreUri, httpClient, account),
+		OutputClient:               *NewOutputClient(coreUri, httpClient, account),
+		PolicyClient:               *NewPolicyClient(hubUri, httpClient, account),
+		RegistryCoreClient:         *NewRegistryCoreClient(hubUri, httpClient, account),
+		SecretClient:               *NewSecretClient(coreUri, httpClient, account),
+		UserClient:                 *NewUserClient(hubUri, httpClient, account),
+	}
+	return rtn, nil
+}
+
+func resolveUri(host string, scheme string) (string, error) {
+	coreHostUri, err := url.Parse(host)
+	if err != nil {
+		return "", err
+	}
+
+	coreUri := fmt.Sprintf("%s://%s", scheme, host)
+	if coreHostUri.Scheme != "" {
+		coreUri = host
+	}
+	return coreUri, nil
 }

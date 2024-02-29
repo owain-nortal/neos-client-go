@@ -22,3 +22,14 @@ func createHttpRequest(method, url string, body io.Reader) (*http.Request, error
 	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", GetAccessToken()))
 	return req, err
 }
+
+func filterQuery(filter string, name string) string {
+	filterQuery := ""
+	if filter != "" {
+		filterQuery = fmt.Sprintf("?%s=%s", name, filter)
+	}
+	return filterQuery
+}
+
+
+

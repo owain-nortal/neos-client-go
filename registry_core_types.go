@@ -7,6 +7,7 @@ type RegistryCore struct {
 	Host      string `json:"host"`
 	Urn       string `json:"urn"`
 	Name      string `json:"name"`
+	Version   string `json:"version"`
 	AccessKey string `json:"access_key"`
 }
 
@@ -20,11 +21,17 @@ type RegistryCorePostRequest struct {
 }
 
 type RegistryCoreDeleteRequest struct {
-	Urn string `json:"urn"`
+	Id string `json:"id"`
+}
+
+type RegistryCoreKeyPairPostResponse struct {
+	AccessKeyID     string `json:"access_key_id"`
+	SecretAccessKey string `json:"secret_access_key"`
+	IsSysyem        bool   `json:"is_system"`
 }
 
 type RegistryCorePostResponse struct {
-	Identifier string `json:"identifier"`
-	Urn        string `json:"urn"`
-	AccessKey  string `json:"access_key"`
+	Identifier string                          `json:"identifier"`
+	Urn        string                          `json:"urn"`
+	KeyPair    RegistryCoreKeyPairPostResponse `json:"keypair"`
 }

@@ -81,3 +81,76 @@ type DataSourcePutInfoResponse struct {
 	Links      []string `json:"links"`
 }
 
+
+type DataSourceGetResponse struct {
+	// Connection struct {
+	// 	ConnectionType string `json:"connection_type"`
+	// 	Database       string `json:"database"`
+	// 	Engine         string `json:"engine"`
+	// 	Host           string `json:"host"`
+	// 	Password       struct {
+	// 		EnvKey string `json:"env_key"`
+	// 	} `json:"password"`
+	// 	Port   int    `json:"port"`
+	// 	Schema string `json:"schema"`
+	// 	User   struct {
+	// 		EnvKey string `json:"env_key"`
+	// 	} `json:"user"`
+	// } `json:"connection"`
+	Entity struct {
+		CreatedAt   time.Time `json:"created_at"`
+		Description string    `json:"description"`
+		Identifier  string    `json:"identifier"`
+		IsSystem    bool      `json:"is_system"`
+		Label       string    `json:"label"`
+		Name        string    `json:"name"`
+		Owner       string    `json:"owner"`
+		State       struct {
+			Code    string `json:"code"`
+			Healthy bool   `json:"healthy"`
+			Reason  string `json:"reason"`
+		} `json:"state"`
+		Urn string `json:"urn"`
+	} `json:"entity"`
+	EntityInfo struct {
+		ContactIds []string `json:"contact_ids"`
+		Links      []string `json:"links"`
+		Owner      string   `json:"owner"`
+	} `json:"entity_info"`
+	Links struct {
+		Children []struct {
+			CreatedAt   time.Time `json:"created_at"`
+			Description string    `json:"description"`
+			EntityType  string    `json:"entity_type"`
+			Identifier  string    `json:"identifier"`
+			IsSystem    bool      `json:"is_system"`
+			Label       string    `json:"label"`
+			Name        string    `json:"name"`
+			Owner       string    `json:"owner"`
+			State       struct {
+				Code    string `json:"code"`
+				Healthy bool   `json:"healthy"`
+				Reason  string `json:"reason"`
+			} `json:"state"`
+			Urn string `json:"urn"`
+		} `json:"children"`
+		Parents []struct {
+			CreatedAt   time.Time `json:"created_at"`
+			Description string    `json:"description"`
+			EntityType  string    `json:"entity_type"`
+			Identifier  string    `json:"identifier"`
+			IsSystem    bool      `json:"is_system"`
+			Label       string    `json:"label"`
+			Name        string    `json:"name"`
+			Owner       string    `json:"owner"`
+			State       struct {
+				Code    string `json:"code"`
+				Healthy bool   `json:"healthy"`
+				Reason  string `json:"reason"`
+			} `json:"state"`
+			Urn string `json:"urn"`
+		} `json:"parents"`
+	} `json:"links"`
+	SecretIdentifier string `json:"secret_identifier"`
+	SparkIdentifier  string `json:"spark_identifier"`
+}

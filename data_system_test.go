@@ -11,12 +11,7 @@ import (
 	//"github.com/owain-nortal/neos-client-go"
 )
 
-func createServers() {
-
-}
-
-func TestDataSystemV2PostOK(t *testing.T) {
-
+func TestDataSystemV2PostOKa1(t *testing.T) {
 	expected := DataSystemPostResponse{}
 	expected.Identifier = "xyz321"
 	expected.Name = "something"
@@ -48,8 +43,8 @@ func TestDataSystemV2PostOK(t *testing.T) {
 		},
 	}
 
-	c := NewNeosClient(iamsvr.URL, registrysvr.URL, coresvr.URL, "https")
-	res, err := c.DataSystemPost(context.Background(), request)
+	DataSystemClient := NewDataSystemClient(coresvr.URL, NewNeosHttp("root","KSA"))
+	res, err := DataSystemClient.Post(context.Background(), request)
 	if err != nil {
 		t.Errorf("expected err to be nil got %v", err)
 	}
@@ -57,9 +52,10 @@ func TestDataSystemV2PostOK(t *testing.T) {
 	if res.Name != request.Entity.Name {
 		t.Errorf("expected entiry name to be %s got %s", request.Entity.Name, res.Name)
 	}
+
 }
 
-func TestDataSystemV2PutOK(t *testing.T) {
+func TestDataSystemV2PutOKa(t *testing.T) {
 
 	expected := DataSystemPutResponse{}
 	expected.Identifier = "xyz321"
@@ -89,8 +85,8 @@ func TestDataSystemV2PutOK(t *testing.T) {
 		},
 	}
 
-	c := NewNeosClient(iamsvr.URL, registrysvr.URL, coresvr.URL, "https")
-	res, err := c.DataSystemPut(context.Background(), "123", request)
+	DataSystemClient := NewDataSystemClient(coresvr.URL, NewNeosHttp("root","KSA"))
+	res, err := DataSystemClient.Put(context.Background(), "123", request)
 	if err != nil {
 		t.Errorf("expected err to be nil got %v", err)
 	}
@@ -100,7 +96,7 @@ func TestDataSystemV2PutOK(t *testing.T) {
 	}
 }
 
-func TestDataSystemV2PutFailed(t *testing.T) {
+func TestDataSystemV2PutFaileda(t *testing.T) {
 
 	coresvr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusUnauthorized)
@@ -113,14 +109,15 @@ func TestDataSystemV2PutFailed(t *testing.T) {
 	defer registrysvr.Close()
 	defer coresvr.Close()
 	request := DataSystemPutRequest{}
-	c := NewNeosClient(iamsvr.URL, registrysvr.URL, coresvr.URL, "https")
-	_, err := c.DataSystemPut(context.Background(), "321ads", request)
+
+	DataSystemClient := NewDataSystemClient(coresvr.URL, NewNeosHttp("root","KSA"))
+	_, err := DataSystemClient.Put(context.Background(), "321ads", request)
 	if err == nil {
 		t.Errorf("expected err to be set not nil")
 	}
 }
 
-func TestDataSystemV2PostFailed(t *testing.T) {
+func TestDataSystemV2PostFaileda(t *testing.T) {
 
 	coresvr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusUnauthorized)
@@ -133,14 +130,14 @@ func TestDataSystemV2PostFailed(t *testing.T) {
 	defer registrysvr.Close()
 	defer coresvr.Close()
 	request := DataSystemPostRequest{}
-	c := NewNeosClient(iamsvr.URL, registrysvr.URL, coresvr.URL,"https")
-	_, err := c.DataSystemPost(context.Background(), request)
+	DataSystemClient := NewDataSystemClient(coresvr.URL, NewNeosHttp("root","KSA"))
+	_, err := DataSystemClient.Post(context.Background(), request)
 	if err == nil {
 		t.Errorf("expected err to be set not nil")
 	}
 }
 
-func TestDataSystemV2GetOK(t *testing.T) {
+func TestDataSystemV2GetOKa(t *testing.T) {
 
 	expected := DataSystemList{}
 	ds := []DataSystem{
@@ -168,8 +165,8 @@ func TestDataSystemV2GetOK(t *testing.T) {
 	defer iamsvr.Close()
 	defer registrysvr.Close()
 	defer coresvr.Close()
-	c := NewNeosClient(iamsvr.URL, registrysvr.URL, coresvr.URL,"https")
-	res, err := c.DataSystemGet()
+	DataSystemClient := NewDataSystemClient(coresvr.URL, NewNeosHttp("root","KSA"))
+	res, err := DataSystemClient.Get()
 	if err != nil {
 		t.Errorf("expected err to be nil got %v", err)
 	}
@@ -179,7 +176,7 @@ func TestDataSystemV2GetOK(t *testing.T) {
 	}
 }
 
-func TestDataSystemV2DeleteOK(t *testing.T) {
+func TestDataSystemV2DeleteOKa(t *testing.T) {
 	coresvr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	}))
@@ -190,14 +187,14 @@ func TestDataSystemV2DeleteOK(t *testing.T) {
 	defer iamsvr.Close()
 	defer registrysvr.Close()
 	defer coresvr.Close()
-	c := NewNeosClient(iamsvr.URL, registrysvr.URL, coresvr.URL,"https")
-	err := c.DataSystemDelete(context.Background(), "abc123")
+	DataSystemClient := NewDataSystemClient(coresvr.URL, NewNeosHttp("root","KSA"))
+	err := DataSystemClient.Delete(context.Background(), "abc123")
 	if err != nil {
 		t.Errorf("expected err to be nil got %v", err)
 	}
 }
 
-func TestDataSystemV2DeleteFailed(t *testing.T) {
+func TestDataSystemV2DeleteFaileda(t *testing.T) {
 	coresvr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusUnauthorized)
 	}))
@@ -208,14 +205,14 @@ func TestDataSystemV2DeleteFailed(t *testing.T) {
 	defer iamsvr.Close()
 	defer registrysvr.Close()
 	defer coresvr.Close()
-	c := NewNeosClient(iamsvr.URL, registrysvr.URL, coresvr.URL,"https")
-	err := c.DataSystemDelete(context.Background(), "abc123")
+	DataSystemClient := NewDataSystemClient(coresvr.URL, NewNeosHttp("root","KSA"))
+	err := DataSystemClient.Delete(context.Background(), "abc123")
 	if err == nil {
 		t.Errorf("expected err to not be nil ")
 	}
 }
 
-func TestDataSystemV2GetFailed(t *testing.T) {
+func TestDataSystemV2GetFaileda(t *testing.T) {
 	coresvr := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusUnauthorized)
 	}))
@@ -226,8 +223,8 @@ func TestDataSystemV2GetFailed(t *testing.T) {
 	defer iamsvr.Close()
 	defer registrysvr.Close()
 	defer coresvr.Close()
-	c := NewNeosClient(iamsvr.URL, registrysvr.URL, coresvr.URL,"https")
-	_, err := c.DataSystemGet()
+	DataSystemClient := NewDataSystemClient(coresvr.URL, NewNeosHttp("root","KSA"))
+	_, err := DataSystemClient.Get()
 	if err == nil {
 		t.Errorf("expected err to be set got nil")
 	}
@@ -265,7 +262,7 @@ func TestDataSystemV2GetFailed(t *testing.T) {
 
 // }
 
-func TestEscapce(t *testing.T) {
+func TestEscapcea(t *testing.T) {
 	orig := "\"a\"a\"a\"a\"a\"a\"a"
 	new := strings.Replace(orig, "\"", "", -1)
 	if new != "aaaaaaa" {
