@@ -56,6 +56,47 @@ func (n *NeosHttp) Delete(requestURL string, expectedCode int) error {
 	return nil
 }
 
+func (n *NeosHttp) DeletePayload(requestURL string, unquotedString string, expectedCode int) ([]byte, error) {
+	req, err := n.CreateHttpRequest(http.MethodDelete, requestURL, bytes.NewBuffer([]byte(unquotedString)))
+	if err != nil {
+		return nil, errors.Wrap(err, " could not create delete request")
+	}
+
+	res, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return nil, errors.Wrap(err, " error making http delete request ")
+	}
+
+	resBody, err := io.ReadAll(res.Body)
+	if err != nil {
+		return nil, errors.Wrap(err, " could not read delete response body")
+	}
+
+	byteBody := []byte(resBody)
+	if res.StatusCode != expectedCode {
+		return nil, fmt.Errorf(" delete unexpected response code %d %s", res.StatusCode, byteBody)
+	}
+	return byteBody, nil
+}
+
+func (n *NeosHttp) DeleteUnmarshal(requestURL string, input any, expectedCode int, output any) error {
+	b, err := json.Marshal(input)
+	if err != nil {
+		return errors.Wrap(err, " could not marshal request")
+	}
+
+	byteBody, err := n.DeletePayload(requestURL, n.unquoteString(b), expectedCode)
+	if err != nil {
+		return err
+	}
+
+	err = json.Unmarshal(byteBody, &output)
+	if err != nil {
+		return errors.Wrap(err, " could not unmashal body")
+	}
+	return nil
+}
+
 func (n *NeosHttp) Post(requestURL string, unquotedString string, expectedCode int) ([]byte, error) {
 	req, err := n.CreateHttpRequest(http.MethodPost, requestURL, bytes.NewBuffer([]byte(unquotedString)))
 
@@ -78,6 +119,15 @@ func (n *NeosHttp) Post(requestURL string, unquotedString string, expectedCode i
 		return nil, fmt.Errorf(" post unexpected response code %d %s", res.StatusCode, byteBody)
 	}
 	return byteBody, nil
+}
+
+func (n *NeosHttp) PostRaw(requestURL string, input string, expectedCode int) ([]byte, error) {
+	o, err := n.Post(requestURL, input, expectedCode)
+	if err != nil {
+		return nil, err
+	}
+
+	return o, nil
 }
 
 func (n *NeosHttp) PostUnmarshal(requestURL string, input any, expectedCode int, output any) error {
@@ -139,6 +189,24 @@ func (n *NeosHttp) PutUnmarshal(requestURL string, input any, expectedCode int, 
 	}
 
 	return nil
+}
+
+func (n *NeosHttp) PutRaw(requestURL string, input string, expectedCode int) ([]byte, error) {
+	o, err := n.Put(requestURL, input, expectedCode)
+	if err != nil {
+		return nil, err
+	}
+
+	return o, nil
+}
+
+func (n *NeosHttp) PutUnquoteRaw(requestURL string, input string, expectedCode int) ([]byte, error) {
+	o, err := n.Put(requestURL, n.unquoteString([]byte(input)), expectedCode)
+	if err != nil {
+		return nil, err
+	}
+
+	return o, nil
 }
 
 func (n *NeosHttp) Get(requestURL string, expectedCode int) ([]byte, error) {

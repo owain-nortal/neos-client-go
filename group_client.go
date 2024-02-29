@@ -10,16 +10,15 @@ import (
 type GroupClient struct {
 	hubUri string
 	http   *NeosHttp
+	Account string
 }
 
-func NewGroupClient(hubUri string, http *NeosHttp) *GroupClient {
+func NewGroupClient(hubUri string, http *NeosHttp, account string) *GroupClient {
 	return &GroupClient{
 		hubUri: hubUri,
 		http:   http,
 	}
 }
-
-
 
 func (c *GroupClient) List(filter string) (GroupList, error) {
 	var rtn GroupList
@@ -65,11 +64,12 @@ func (c *GroupClient) PrincipalsPost(ctx context.Context, id string, dspr GroupP
 	return rtn, err
 }
 
-func (c *GroupClient) PrincipalsDelete(ctx context.Context, id string) error {
+func (c *GroupClient) PrincipalsDelete(ctx context.Context, id string, dspr GroupPrincipalDeleteRequest) (Group, error) {
+	var rtn Group
 	requestURL := fmt.Sprintf("%s/api/hub/iam/group/%s/principals", c.hubUri, id)
-	err := c.http.Delete(requestURL, http.StatusOK)
+	err := c.http.DeleteUnmarshal(requestURL, dspr, http.StatusOK, &rtn)
 	if err != nil {
-		return errors.Wrap(err, "error doing http delete")
+		return rtn, errors.Wrap(err, "error doing http delete")
 	}
-	return err
+	return rtn, err
 }

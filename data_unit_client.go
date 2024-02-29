@@ -3,19 +3,21 @@ package neos
 import (
 	"context"
 	"fmt"
-	"net/http"
 	"github.com/pkg/errors"
+	"net/http"
 )
 
 type DataUnitClient struct {
 	coreUri string
 	http    *NeosHttp
+	Account string
 }
 
-func NewDataUnitClient(coreUri string, http *NeosHttp) *DataUnitClient {
+func NewDataUnitClient(coreUri string, http *NeosHttp, account string) *DataUnitClient {
 	return &DataUnitClient{
 		coreUri: coreUri,
 		http:    http,
+		Account: account,
 	}
 }
 
@@ -39,6 +41,19 @@ func (c *DataUnitClient) Put(ctx context.Context, id string, dspr DataUnitPutReq
 	var rtn DataUnitPutResponse
 	requestURL := fmt.Sprintf("%s/api/gateway/v2/data_unit/%s", c.coreUri, id)
 	err := c.http.PutUnmarshal(requestURL, dspr, http.StatusOK, &rtn)
+	return rtn, err
+}
+
+func (c *DataUnitClient) ConfigPut(ctx context.Context, id string, config string) (string, error) {
+	var rtn string
+	var bytes []byte
+	requestURL := fmt.Sprintf("%s/api/gateway/v2/data_unit/%s/config", c.coreUri, id)
+	bytes, err := c.http.PutRaw(requestURL, config, http.StatusOK)
+	if err != nil {
+		return rtn, errors.Wrap(err, "error doing config put")
+
+	}
+	rtn = string(bytes)
 	return rtn, err
 }
 
@@ -96,5 +111,3 @@ func (c *DataUnitClient) ConfigTableGet(ctx context.Context, id string) (DataUni
 	err := c.http.GetUnmarshal(requestURL, http.StatusOK, &rtn)
 	return rtn, err
 }
-
-

@@ -8,19 +8,21 @@ import (
 	"github.com/pkg/errors"
 	"io"
 	"net/http"
-	"os"
-	"strings"
+	// "os"
+	// "strings"
 )
 
 type DataProductClient struct {
 	coreUri string
 	http    *NeosHttp
+	Account string
 }
 
-func NewDataProductClient(coreUri string, http *NeosHttp) *DataProductClient {
+func NewDataProductClient(coreUri string, http *NeosHttp, account string) *DataProductClient {
 	return &DataProductClient{
 		coreUri: coreUri,
 		http:    http,
+		Account: account,
 	}
 }
 
@@ -125,23 +127,21 @@ func (c DataProductClient) Get() (DataProductList, error) {
 // 	return rtn, nil
 // }
 
-func (c DataProductClient) DataProductBuilderPut(ctx context.Context, id string, json string) (DataProductBuilderPutResponse, error) {
+func (c DataProductClient) DataProductBuilderPut(ctx context.Context, id string, json string) ([]byte, error) {
 	tflog.Info(ctx, fmt.Sprintf("DataProductBuilderPut %s", id))
 
-	var rtn DataProductBuilderPutResponse
+	var rtn []byte
 
 	requestURL := fmt.Sprintf("%s/api/gateway/v2/data_product/%s/spark/builder", c.coreUri, id)
 
-	unquotedString := strings.Replace(json, "\\\"", "", -1)
-	noNL := strings.Replace(unquotedString, "\\n", "", -1)
+	// unquotedString := strings.Replace(json, "\\\"", "", -1)
+	// noNL := strings.Replace(unquotedString, "\\n", "", -1)
 
-	d1 := []byte(noNL)
-	_ = os.WriteFile("/tmp/dat1", d1, 0644)
-	_ = os.WriteFile("/tmp/dat2", []byte(json), 0644)
+	// d1 :=
 
-	tflog.Info(ctx, fmt.Sprintf("DataProductBuilderPut requestURL %s", requestURL))
-	tflog.Info(ctx, fmt.Sprintf("DataProductBuilderPut request body %s", noNL))
-	req, err := createHttpRequest(http.MethodPut, requestURL, bytes.NewBuffer([]byte(noNL)))
+	tflog.Info(ctx, fmt.Sprintf("DataProductBuilderPut body json %s", json))
+	// tflog.Info(ctx, fmt.Sprintf("DataProductBuilderPut request body %s", noNL))
+	req, err := createHttpRequest(http.MethodPut, requestURL, bytes.NewBuffer([]byte(json)))
 	if err != nil {
 		return rtn, errors.Wrap(err, " could not create request")
 	}
@@ -156,13 +156,13 @@ func (c DataProductClient) DataProductBuilderPut(ctx context.Context, id string,
 		return rtn, errors.Wrap(err, " could not read response body")
 	}
 
-	byteBody := []byte(resBody)
+	// byteBody := []byte(resBody)
 
-	tflog.Info(ctx, fmt.Sprintf("DataProductBuilderPut result body %s", string(byteBody)))
+	// tflog.Info(ctx, fmt.Sprintf("DataProductBuilderPut result body %s", string(byteBody)))
 
 	if res.StatusCode != http.StatusOK {
-		return rtn, fmt.Errorf(" unexpected response code %d %s", res.StatusCode, byteBody)
+		return rtn, fmt.Errorf(" unexpected response code %d %s", res.StatusCode, resBody)
 	}
-
+		rtn = resBody
 	return rtn, nil
 }

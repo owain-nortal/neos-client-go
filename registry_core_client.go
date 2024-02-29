@@ -3,24 +3,26 @@ package neos
 import (
 	"context"
 	"fmt"
-	"net/http"
 	"github.com/pkg/errors"
+	"net/http"
 )
 
 type RegistryCoreClient struct {
 	registryUri string
 	http        *NeosHttp
+	Account     string
 }
 
-func NewRegistryCoreClient(registryUri string, http *NeosHttp) *RegistryCoreClient {
+func NewRegistryCoreClient(registryUri string, http *NeosHttp, account string) *RegistryCoreClient {
 	return &RegistryCoreClient{
 		registryUri: registryUri,
 		http:        http,
+		Account:     account,
 	}
 }
 
-func (c *RegistryCoreClient) Delete(ctx context.Context, rcdr RegistryCoreDeleteRequest) error {
-	requestURL := fmt.Sprintf("%s/api/registry/core", c.registryUri)
+func (c *RegistryCoreClient) Delete(ctx context.Context, id string) error {
+	requestURL := fmt.Sprintf("%s/api/registry/core/%s", c.registryUri, id)
 	err := c.http.Delete(requestURL, http.StatusOK)
 	if err != nil {
 		return errors.Wrap(err, "error doing http delete")

@@ -9,14 +9,16 @@ import (
 )
 
 type UserClient struct {
-	hubUri string
-	http   *NeosHttp
+	hubUri  string
+	http    *NeosHttp
+	Account string
 }
 
-func NewUserClient(hubUri string, http *NeosHttp) *UserClient {
+func NewUserClient(hubUri string, http *NeosHttp, account string) *UserClient {
 	return &UserClient{
-		hubUri: hubUri,
-		http:   http,
+		hubUri:  hubUri,
+		http:    http,
+		Account: account,
 	}
 }
 

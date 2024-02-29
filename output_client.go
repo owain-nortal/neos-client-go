@@ -3,19 +3,21 @@ package neos
 import (
 	"context"
 	"fmt"
-	"net/http"
 	"github.com/pkg/errors"
+	"net/http"
 )
 
 type OutputClient struct {
 	coreUri string
 	http    *NeosHttp
+	Account string
 }
 
-func NewOutputClient(coreUri string, http *NeosHttp) *OutputClient {
+func NewOutputClient(coreUri string, http *NeosHttp, account string) *OutputClient {
 	return &OutputClient{
 		coreUri: coreUri,
 		http:    http,
+		Account: account,
 	}
 }
 

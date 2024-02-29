@@ -101,23 +101,26 @@ func NewClient(url string) Client {
 // }
 
 type NeosClient struct {
-	hubHost            string
-	coreHost           string
-	scheme             string
-	coreUri            string
-	AccountClient      AccountClient
-	DataProductClient  DataProductClient
-	DataSourceClient   DataSourceClient
-	DataSystemClient   DataSystemClient
-	DataUnitClient     DataUnitClient
-	GroupClient        GroupClient
-	IAMClient          IAMClient
-	LinksClient        LinksClient
-	OutputClient       OutputClient
-	PolicyClient       PolicyClient
-	RegistryCoreClient RegistryCoreClient
-	SecretClient       SecretClient
-	UserClient         UserClient
+	hubHost                    string
+	coreHost                   string
+	scheme                     string
+	coreUri                    string
+	AccountClient              AccountClient
+	DataProductClient          DataProductClient
+	DataSourceClient           DataSourceClient
+	DataSourceConnectionClient DataSourceConnectionClient
+	DataSourceSecretClient     DataSourceSecretClient
+	DataSystemClient           DataSystemClient
+	DataProductSchemaClient    DataProductSchemaClient
+	DataUnitClient             DataUnitClient
+	GroupClient                GroupClient
+	IAMClient                  IAMClient
+	LinksClient                LinksClient
+	OutputClient               OutputClient
+	PolicyClient               PolicyClient
+	RegistryCoreClient         RegistryCoreClient
+	SecretClient               SecretClient
+	UserClient                 UserClient
 }
 
 func NewNeosClient(hubHost, coreHost string, scheme string, account string, partition string) (NeosClient, error) {
@@ -136,22 +139,25 @@ func NewNeosClient(hubHost, coreHost string, scheme string, account string, part
 	httpClient := NewNeosHttp(account, partition)
 
 	rtn = NeosClient{
-		hubHost:            hubHost,
-		coreHost:           coreHost,
-		scheme:             scheme,
-		coreUri:            coreUri,
-		AccountClient:      *NewAccountClient(hubUri, httpClient),
-		DataProductClient:  *NewDataProductClient(coreUri, httpClient),
-		DataSourceClient:   *NewDataSourceClient(coreUri, httpClient),
-		DataSystemClient:   *NewDataSystemClient(coreUri, httpClient),
-		DataUnitClient:     *NewDataUnitClient(coreUri, httpClient),
-		GroupClient:        *NewGroupClient(hubUri, httpClient),
-		LinksClient:        *NewLinksClient(coreUri, httpClient),
-		OutputClient:       *NewOutputClient(coreUri, httpClient),
-		PolicyClient:       *NewPolicyClient(hubUri, httpClient),
-		RegistryCoreClient: *NewRegistryCoreClient(hubUri, httpClient),
-		SecretClient:       *NewSecretClient(coreUri, httpClient),
-		UserClient:         *NewUserClient(hubUri, httpClient),
+		hubHost:                    hubHost,
+		coreHost:                   coreHost,
+		scheme:                     scheme,
+		coreUri:                    coreUri,
+		AccountClient:              *NewAccountClient(hubUri, httpClient, account),
+		DataProductClient:          *NewDataProductClient(coreUri, httpClient, account),
+		DataSourceClient:           *NewDataSourceClient(coreUri, httpClient, account),
+		DataSourceConnectionClient: *NewDataSourceConnectionClient(coreUri, httpClient, account),
+		DataSourceSecretClient:     *NewDataSourceSecretClient(coreUri, httpClient, account),
+		DataSystemClient:           *NewDataSystemClient(coreUri, httpClient, account),
+		DataProductSchemaClient:    *NewDataProductSchemaClient(coreUri, httpClient, account),
+		DataUnitClient:             *NewDataUnitClient(coreUri, httpClient, account),
+		GroupClient:                *NewGroupClient(hubUri, httpClient, account),
+		LinksClient:                *NewLinksClient(coreUri, httpClient, account),
+		OutputClient:               *NewOutputClient(coreUri, httpClient, account),
+		PolicyClient:               *NewPolicyClient(hubUri, httpClient, account),
+		RegistryCoreClient:         *NewRegistryCoreClient(hubUri, httpClient, account),
+		SecretClient:               *NewSecretClient(coreUri, httpClient, account),
+		UserClient:                 *NewUserClient(hubUri, httpClient, account),
 	}
 	return rtn, nil
 }

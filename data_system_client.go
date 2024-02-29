@@ -10,12 +10,14 @@ import (
 type DataSystemClient struct {
 	coreUri string
 	http    *NeosHttp
+	Account string
 }
 
-func NewDataSystemClient(coreUri string, http *NeosHttp) *DataSystemClient {
+func NewDataSystemClient(coreUri string, http *NeosHttp, account string) *DataSystemClient {
 	return &DataSystemClient{
 		coreUri: coreUri,
 		http:    http,
+		Account: account,
 	}
 }
 

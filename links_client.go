@@ -11,12 +11,14 @@ import (
 type LinksClient struct {
 	coreUri string
 	http    *NeosHttp
+	Account string
 }
 
-func NewLinksClient(coreUri string, http *NeosHttp) *LinksClient {
+func NewLinksClient(coreUri string, http *NeosHttp, account string) *LinksClient {
 	return &LinksClient{
 		coreUri: coreUri,
 		http:    http,
+		Account: account,
 	}
 }
 
@@ -31,8 +33,8 @@ func (c *LinksClient) Delete(ctx context.Context, source string, dest string, pa
 
 func (c *LinksClient) Post(ctx context.Context, source string, dest string, parentIdentifier string, childIdentifier string) (LinkPostResponse, error) {
 	tflog.Info(ctx, fmt.Sprintf("LinkDataSourceDataUnitPost request parent: [%s] child: [%s]", parentIdentifier, childIdentifier))
-	requestURL := fmt.Sprintf("%s/api/gateway/v2/link/%s/%s/%s/%s", c.coreUri, source, parentIdentifier, dest, childIdentifier)	
-	var rtn LinkPostResponse	
+	requestURL := fmt.Sprintf("%s/api/gateway/v2/link/%s/%s/%s/%s", c.coreUri, source, parentIdentifier, dest, childIdentifier)
+	var rtn LinkPostResponse
 	err := c.http.PostUnmarshal(requestURL, []byte{}, http.StatusOK, &rtn)
 	return rtn, err
 }

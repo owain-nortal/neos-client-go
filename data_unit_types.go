@@ -135,6 +135,10 @@ type DataUnitConfigurationTablePutResponse struct {
 	Configuration DataUnitConfigurationTableConfigPutResponse `json:"configuration"`
 }
 
+type DataUnitConfigPutResponse struct {
+	Configuration string `json:"configuration"`
+}
+
 type DataUnitConfigurationTableConfigPutResponse struct {
 	DateUnitType string `json:"data_unit_type"`
 	Table        string `json:"table"`
@@ -177,12 +181,6 @@ type DataUnitConfigurationDataProductConfigPutResponse struct {
 	Engine       string `json:"engine"`
 	Table        string `json:"table"`
 }
-
-
-
-
-
-
 
 type DataUnitConfigurationCSVGetResponse struct {
 	Configuration DataUnitConfigurationCSVConfigGetResponse `json:"configuration"`
@@ -232,7 +230,6 @@ type DataUnitConfigurationDataProductConfigGetResponse struct {
 	Engine       string `json:"engine"`
 	Table        string `json:"table"`
 }
-
 
 type DataUnitConfigurationDataUnitTypeOnlyConfigGetResponse struct {
 	DateUnitType string `json:"data_unit_type"`
