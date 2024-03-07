@@ -46,7 +46,7 @@ func (c *UserClient) List(search, system, account string) (UserList, error) {
 
 func (c *UserClient) Post(ctx context.Context, dspr UserPostRequest) (User, error) {
 	var rtn User
-	requestURL := fmt.Sprintf("%s/api/hub/iam/user", c.hubUri)
+	requestURL := fmt.Sprintf("%s/api/hub/iam/user?account=%s", c.hubUri, c.Account)
 	err := c.http.PostUnmarshal(requestURL, dspr, http.StatusOK, &rtn)
 	return rtn, err
 }
