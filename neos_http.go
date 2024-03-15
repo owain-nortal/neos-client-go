@@ -11,15 +11,18 @@ import (
 )
 
 type NeosHttp struct {
-	XAccount   string
-	XPartition string
+	XAccount        string
+	XPartition      string
+	tempHeaderStore map[string]string
 }
 
 func NewNeosHttp(XAccount string, XPartition string) *NeosHttp {
-	return &NeosHttp{
-		XAccount:   XAccount,
-		XPartition: XPartition,
+	rtn := &NeosHttp{
+		XAccount:        XAccount,
+		XPartition:      XPartition,
+		tempHeaderStore: make(map[string]string),
 	}
+	return rtn
 }
 
 func (n *NeosHttp) unquoteString(b []byte) string {
@@ -27,16 +30,29 @@ func (n *NeosHttp) unquoteString(b []byte) string {
 	return unquotedString
 }
 
+func (n *NeosHttp) resetHeaderStoreToEmpty() {
+	n.tempHeaderStore = make(map[string]string)
+}
+
 func (n *NeosHttp) CreateHttpRequest(method, url string, body io.Reader) (*http.Request, error) {
 	req, err := http.NewRequest(method, url, body)
 	if err != nil {
 		return req, err
 	}
+
+	for k, v := range n.tempHeaderStore {
+		req.Header.Set(k, v)
+	}
+	n.resetHeaderStoreToEmpty()
 	req.Header.Set("x-account", n.XAccount)
 	req.Header.Set("x-partition", n.XPartition)
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", GetAccessToken()))
 	return req, err
+}
+
+func (n *NeosHttp) AddHeader(name string, value string) {
+	n.tempHeaderStore[name] = value
 }
 
 func (n *NeosHttp) Delete(requestURL string, expectedCode int) error {

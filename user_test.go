@@ -24,11 +24,10 @@ func TestUser(t *testing.T) {
 		Email:     "test3@example.com",
 	}
 
-	acresp, err := ac.Post(context.Background(), user)
+	acresp, err := ac.Post(context.Background(), user, "root")
 	if err != nil {
 		t.Errorf("expected err to be nil got %v", err)
 	}
-
 
 	err = ac.Delete(context.Background(), acresp.Identifier, "")
 	if err != nil {

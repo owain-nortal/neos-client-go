@@ -41,13 +41,13 @@ func (c *PolicyClient) Get(nrn string, account string) (Policy, error) {
 	if err != nil {
 		return rtn, err
 	}
-		
+
 	json, err := c.NormalizeJson(string(body))
 	if err != nil {
 		return rtn, errors.Wrap(err, "error normalizing json")
 	}
-	
-		rtn.Policy = json
+
+	rtn.Policy = json
 	return rtn, err
 }
 
@@ -102,6 +102,10 @@ func (c *PolicyClient) Put(ctx context.Context, id string, dspr PolicyPutRequest
 
 	requestURL := fmt.Sprintf("%s/api/hub/iam/policy/user%s", c.hubUri, query)
 
+	if c.accountIsNotRootOrEmpty(account) {
+		c.http.AddHeader("x-account-override", account)
+	}
+
 	json, err := c.NormalizeJson(dspr.Policy)
 	if err != nil {
 		return r, errors.Wrap(err, "error normalizing json")
@@ -131,8 +135,19 @@ func (c *PolicyClient) ConvertUserPolicyToJson(userPolicy UserPolicy) (string, e
 	return string(b), err
 }
 
+func (c *PolicyClient) accountIsNotRootOrEmpty(account string) bool {
+	return account != "" && account != "root"
+}
+
 func (c *PolicyClient) Delete(ctx context.Context, id string, account string) error {
-	requestURL := fmt.Sprintf("%s/api/hub/iam/policy/user?user_nrn=%s", c.hubUri, id)
+
+	acc := ""
+	if c.accountIsNotRootOrEmpty(account) {
+		acc = fmt.Sprintf("&account=%s", account)
+		c.http.AddHeader("x-account-override", account)
+	}
+
+	requestURL := fmt.Sprintf("%s/api/hub/iam/policy/user?user_nrn=%s%s", c.hubUri, id, acc)
 	err := c.http.Delete(requestURL, http.StatusOK)
 	if err != nil {
 		return errors.Wrap(err, "error doing http delete")

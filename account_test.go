@@ -7,7 +7,7 @@ import (
 
 func TestAccount(t *testing.T) {
 	LoginToGetToken("owain10.neosdata.cloud/api/hub/iam", "neosadmin", "ZWZjYWY4MDll")
-	ac := NewAccountClient("https://owain10.neosdata.cloud", NewNeosHttp("root", "KSA"))
+	ac := NewAccountClient("https://owain10.neosdata.cloud", NewNeosHttp("root", "KSA"), "root")
 	list, err := ac.Get("")
 	if err != nil {
 		t.Errorf("expected err to be nil got %v", err)
@@ -39,7 +39,6 @@ func TestAccount(t *testing.T) {
 	if err != nil {
 		t.Errorf("expected err to be nil got %v", err)
 	}
-
 
 	err = ac.Delete(context.Background(), acresput.Identifier)
 	if err != nil {

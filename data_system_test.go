@@ -43,7 +43,7 @@ func TestDataSystemV2PostOKa1(t *testing.T) {
 		},
 	}
 
-	DataSystemClient := NewDataSystemClient(coresvr.URL, NewNeosHttp("root","KSA"))
+	DataSystemClient := NewDataSystemClient(coresvr.URL, NewNeosHttp("root", "KSA"), "root")
 	res, err := DataSystemClient.Post(context.Background(), request)
 	if err != nil {
 		t.Errorf("expected err to be nil got %v", err)
@@ -85,7 +85,7 @@ func TestDataSystemV2PutOKa(t *testing.T) {
 		},
 	}
 
-	DataSystemClient := NewDataSystemClient(coresvr.URL, NewNeosHttp("root","KSA"))
+	DataSystemClient := NewDataSystemClient(coresvr.URL, NewNeosHttp("root", "KSA"), "root")
 	res, err := DataSystemClient.Put(context.Background(), "123", request)
 	if err != nil {
 		t.Errorf("expected err to be nil got %v", err)
@@ -110,7 +110,7 @@ func TestDataSystemV2PutFaileda(t *testing.T) {
 	defer coresvr.Close()
 	request := DataSystemPutRequest{}
 
-	DataSystemClient := NewDataSystemClient(coresvr.URL, NewNeosHttp("root","KSA"))
+	DataSystemClient := NewDataSystemClient(coresvr.URL, NewNeosHttp("root", "KSA"), "root")
 	_, err := DataSystemClient.Put(context.Background(), "321ads", request)
 	if err == nil {
 		t.Errorf("expected err to be set not nil")
@@ -130,7 +130,7 @@ func TestDataSystemV2PostFaileda(t *testing.T) {
 	defer registrysvr.Close()
 	defer coresvr.Close()
 	request := DataSystemPostRequest{}
-	DataSystemClient := NewDataSystemClient(coresvr.URL, NewNeosHttp("root","KSA"))
+	DataSystemClient := NewDataSystemClient(coresvr.URL, NewNeosHttp("root", "KSA"), "root")
 	_, err := DataSystemClient.Post(context.Background(), request)
 	if err == nil {
 		t.Errorf("expected err to be set not nil")
@@ -165,7 +165,7 @@ func TestDataSystemV2GetOKa(t *testing.T) {
 	defer iamsvr.Close()
 	defer registrysvr.Close()
 	defer coresvr.Close()
-	DataSystemClient := NewDataSystemClient(coresvr.URL, NewNeosHttp("root","KSA"))
+	DataSystemClient := NewDataSystemClient(coresvr.URL, NewNeosHttp("root", "KSA"), "root")
 	res, err := DataSystemClient.Get()
 	if err != nil {
 		t.Errorf("expected err to be nil got %v", err)
@@ -187,7 +187,7 @@ func TestDataSystemV2DeleteOKa(t *testing.T) {
 	defer iamsvr.Close()
 	defer registrysvr.Close()
 	defer coresvr.Close()
-	DataSystemClient := NewDataSystemClient(coresvr.URL, NewNeosHttp("root","KSA"))
+	DataSystemClient := NewDataSystemClient(coresvr.URL, NewNeosHttp("root", "KSA"), "root")
 	err := DataSystemClient.Delete(context.Background(), "abc123")
 	if err != nil {
 		t.Errorf("expected err to be nil got %v", err)
@@ -205,7 +205,7 @@ func TestDataSystemV2DeleteFaileda(t *testing.T) {
 	defer iamsvr.Close()
 	defer registrysvr.Close()
 	defer coresvr.Close()
-	DataSystemClient := NewDataSystemClient(coresvr.URL, NewNeosHttp("root","KSA"))
+	DataSystemClient := NewDataSystemClient(coresvr.URL, NewNeosHttp("root", "KSA"), "root")
 	err := DataSystemClient.Delete(context.Background(), "abc123")
 	if err == nil {
 		t.Errorf("expected err to not be nil ")
@@ -223,7 +223,7 @@ func TestDataSystemV2GetFaileda(t *testing.T) {
 	defer iamsvr.Close()
 	defer registrysvr.Close()
 	defer coresvr.Close()
-	DataSystemClient := NewDataSystemClient(coresvr.URL, NewNeosHttp("root","KSA"))
+	DataSystemClient := NewDataSystemClient(coresvr.URL, NewNeosHttp("root", "KSA"), "root")
 	_, err := DataSystemClient.Get()
 	if err == nil {
 		t.Errorf("expected err to be set got nil")
