@@ -9,6 +9,7 @@ type RegistryCore struct {
 	Name      string `json:"name"`
 	Version   string `json:"version"`
 	AccessKey string `json:"access_key"`
+	Account   string `json:"account"`
 }
 
 type RegistryCoreList struct {
