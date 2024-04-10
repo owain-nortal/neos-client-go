@@ -7,7 +7,7 @@ import (
 	"github.com/pkg/errors"
 	"io"
 	"net/http"
-	"strings"
+	//"strings"
 )
 
 type NeosHttp struct {
@@ -25,10 +25,10 @@ func NewNeosHttp(XAccount string, XPartition string) *NeosHttp {
 	return rtn
 }
 
-func (n *NeosHttp) unquoteString(b []byte) string {
-	unquotedString := strings.Replace(string(b), "\\\"", "", -1)
-	return unquotedString
-}
+// func (n *NeosHttp) unquoteString(b []byte) string {
+// 	unquotedString := strings.Replace(string(b), "\\\"", "", -1)
+// 	return unquotedString
+// }
 
 func (n *NeosHttp) resetHeaderStoreToEmpty() {
 	n.tempHeaderStore = make(map[string]string)
@@ -101,7 +101,7 @@ func (n *NeosHttp) DeleteUnmarshal(requestURL string, input any, expectedCode in
 		return errors.Wrap(err, " could not marshal request")
 	}
 
-	byteBody, err := n.DeletePayload(requestURL, n.unquoteString(b), expectedCode)
+	byteBody, err := n.DeletePayload(requestURL, string(b), expectedCode)
 	if err != nil {
 		return err
 	}
@@ -152,7 +152,9 @@ func (n *NeosHttp) PostUnmarshal(requestURL string, input any, expectedCode int,
 		return errors.Wrap(err, " could not marshal request")
 	}
 
-	byteBody, err := n.Post(requestURL, n.unquoteString(b), expectedCode)
+	data := string(b)
+
+	byteBody, err := n.Post(requestURL, data, expectedCode)
 	if err != nil {
 		return err
 	}
@@ -195,7 +197,7 @@ func (n *NeosHttp) PutUnmarshal(requestURL string, input any, expectedCode int, 
 		return errors.Wrap(err, " could not marshal request")
 	}
 
-	byteBody, err := n.Put(requestURL, n.unquoteString(b), expectedCode)
+	byteBody, err := n.Put(requestURL, string(b), expectedCode)
 	if err != nil {
 		return err
 	}
@@ -217,7 +219,7 @@ func (n *NeosHttp) PutRaw(requestURL string, input string, expectedCode int) ([]
 }
 
 func (n *NeosHttp) PutUnquoteRaw(requestURL string, input string, expectedCode int) ([]byte, error) {
-	o, err := n.Put(requestURL, n.unquoteString([]byte(input)), expectedCode)
+	o, err := n.Put(requestURL, string([]byte(input)), expectedCode)
 	if err != nil {
 		return nil, err
 	}
