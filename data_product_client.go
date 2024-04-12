@@ -163,6 +163,21 @@ func (c DataProductClient) DataProductBuilderPut(ctx context.Context, id string,
 	if res.StatusCode != http.StatusOK {
 		return rtn, fmt.Errorf(" unexpected response code %d %s", res.StatusCode, resBody)
 	}
-		rtn = resBody
+	rtn = resBody
 	return rtn, nil
 }
+
+func (c DataProductClient) DataProductBuilderGet(id string) (string, error) {
+	var rtn string
+	requestURL := fmt.Sprintf("%s/api/gateway/v2/data_product/%s/spark/builder", c.coreUri, id)
+	b, err := c.http.Get(requestURL, http.StatusOK)
+	rtn = string(b)
+	return rtn, err
+}
+
+// func (c DataProductClient) DataProductBuilderDelete(id string)  (error) {
+// 	var rtn string
+// 	requestURL := fmt.Sprintf("%s/api/gateway/v2/data_product/%s/spark/builder", c.coreUri, id)
+// 	err := c.http.Delete(requestURL, http.StatusOK)
+// 	return err
+// }
