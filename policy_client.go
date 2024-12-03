@@ -38,6 +38,9 @@ func (c *PolicyClient) Get(nrn string, account string) (Policy, error) {
 	}
 	requestURL := fmt.Sprintf("%s/api/hub/iam/policy/user?user_nrn=%s%s", c.hubUri, nrn, acc)
 	body, err := c.http.Get(requestURL, http.StatusOK)
+	if c.accountIsNotRootOrEmpty(account) {
+		c.http.AddHeader("x-account-override", account)
+	}
 	if err != nil {
 		return rtn, err
 	}
