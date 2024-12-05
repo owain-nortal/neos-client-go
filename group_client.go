@@ -39,7 +39,7 @@ func (c *GroupClient) Get(id string, account string) (Group, error) {
 	}
 	c.http.AddHeader("x-account", account)
 
-	requestURL := fmt.Sprintf("%s/api/hub/iam/group/%s%s", c.hubUri, id)
+	requestURL := fmt.Sprintf("%s/api/hub/iam/group/%s", c.hubUri, id)
 	err := c.http.GetUnmarshal(requestURL, http.StatusOK, &rtn)
 	return rtn, err
 }
@@ -69,7 +69,7 @@ func (c *GroupClient) Put(ctx context.Context, id string, dspr GroupPutRequest, 
 	}
 	c.http.AddHeader("x-account", account)
 
-	requestURL := fmt.Sprintf("%s/api/hub/iam/group/%s%s", c.hubUri, id)
+	requestURL := fmt.Sprintf("%s/api/hub/iam/group/%s", c.hubUri, id)
 	err := c.http.PutUnmarshal(requestURL, dspr, http.StatusOK, &rtn)
 	return rtn, err
 }
