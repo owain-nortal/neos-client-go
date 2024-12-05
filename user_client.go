@@ -25,9 +25,10 @@ func NewUserClient(hubUri string, http *NeosHttp, account string) *UserClient {
 func (c *UserClient) List(search, system, account string) (UserList, error) {
 	var rtn UserList
 
-	if c.accountIsNotRootOrEmpty(account) {		
+	if c.accountIsNotRootOrEmpty(account) {
 		c.http.AddHeader("x-account-override", account)
 	}
+	c.http.AddHeader("x-account", account)
 
 	query := ""
 	if search != "" {
@@ -54,25 +55,24 @@ func (c *UserClient) accountIsNotRootOrEmpty(account string) bool {
 
 func (c *UserClient) Post(ctx context.Context, dspr UserPostRequest, account string) (User, error) {
 	var rtn User
-
-	acc := ""
 	if c.accountIsNotRootOrEmpty(account) {
-		acc = fmt.Sprintf("?account=%s",account)
 		c.http.AddHeader("x-account-override", account)
 	}
+	c.http.AddHeader("x-account", account)
 	
-	requestURL := fmt.Sprintf("%s/api/hub/iam/user%s", c.hubUri, acc)
+	requestURL := fmt.Sprintf("%s/api/hub/iam/user", c.hubUri)
 	err := c.http.PostUnmarshal(requestURL, dspr, http.StatusOK, &rtn)
 	return rtn, err
 }
 
 func (c *UserClient) Delete(ctx context.Context, id string, account string) error {
 	
-	if c.accountIsNotRootOrEmpty(account) {		
+	if c.accountIsNotRootOrEmpty(account) {
 		c.http.AddHeader("x-account-override", account)
 	}
+	c.http.AddHeader("x-account", account)
 
-	requestURL := fmt.Sprintf("%s/api/hub/iam/user/%s%s", c.hubUri, id, filterQuery(account, "account"))
+	requestURL := fmt.Sprintf("%s/api/hub/iam/user/%s", c.hubUri, id)
 	err := c.http.Delete(requestURL, http.StatusOK)
 	if err != nil {
 		return errors.Wrap(err, "error doing http delete")
@@ -82,11 +82,12 @@ func (c *UserClient) Delete(ctx context.Context, id string, account string) erro
 
 func (c *UserClient) Purge(ctx context.Context, id string, account string) error {
 
-	if c.accountIsNotRootOrEmpty(account) {		
+	if c.accountIsNotRootOrEmpty(account) {
 		c.http.AddHeader("x-account-override", account)
 	}
+	c.http.AddHeader("x-account", account)
 
-	requestURL := fmt.Sprintf("%s/api/hub/iam/user/%s/purge%s", c.hubUri, id, filterQuery(account, "account"))
+	requestURL := fmt.Sprintf("%s/api/hub/iam/user/%s/purge", c.hubUri, id)
 	err := c.http.Delete(requestURL, http.StatusOK)
 	if err != nil {
 		return errors.Wrap(err, "error doing http delete")
