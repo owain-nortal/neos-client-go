@@ -37,6 +37,7 @@ func (c *PolicyClient) Get(nrn string, account string) (Policy, error) {
 		c.http.AddHeader("x-account-override", account)
 	}
 	c.http.AddHeader("x-account", account)
+	
 
 	body, err := c.http.Get(requestURL, http.StatusOK)
 	if err != nil {

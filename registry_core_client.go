@@ -22,12 +22,11 @@ func NewRegistryCoreClient(registryUri string, http *NeosHttp, account string) *
 }
 
 func (c *RegistryCoreClient) Delete(ctx context.Context, id string, account string) error {
-	acc := ""
 	if c.accountIsNotRootOrEmpty(account) {
-		acc = fmt.Sprintf("?account=%s", account)
 		c.http.AddHeader("x-account-override", account)
 	}
-	requestURL := fmt.Sprintf("%s/api/registry/core/%s%s", c.registryUri, id, acc)
+	c.http.AddHeader("x-account", account)
+	requestURL := fmt.Sprintf("%s/api/hub/registry/core/%s", c.registryUri, id)
 	err := c.http.Delete(requestURL, http.StatusOK)
 	if err != nil {
 		return errors.Wrap(err, "error doing http delete")
@@ -41,25 +40,23 @@ func (c *RegistryCoreClient) accountIsNotRootOrEmpty(account string) bool {
 
 func (c *RegistryCoreClient) Post(ctx context.Context, dspr RegistryCorePostRequest, account string) (RegistryCorePostResponse, error) {
 	var rtn RegistryCorePostResponse
-	acc := ""
 	if c.accountIsNotRootOrEmpty(account) {
-		acc = fmt.Sprintf("?account=%s", account)
 		c.http.AddHeader("x-account-override", account)
 	}
+	c.http.AddHeader("x-account", account)
 
-	requestURL := fmt.Sprintf("%s/api/hub/registry/core%s", c.registryUri, acc)
+	requestURL := fmt.Sprintf("%s/api/hub/registry/core", c.registryUri)
 	err := c.http.PostUnmarshal(requestURL, dspr, http.StatusOK, &rtn)
 	return rtn, err
 }
 
 func (c *RegistryCoreClient) Get(account string) (RegistryCoreList, error) {
 	var rtn RegistryCoreList
-	acc := ""
 	if c.accountIsNotRootOrEmpty(account) {
-		acc = fmt.Sprintf("?account=%s", account)
 		c.http.AddHeader("x-account-override", account)
 	}
-	requestURL := fmt.Sprintf("%s/api/hub/registry/core%s", c.registryUri, acc)
+	c.http.AddHeader("x-account", account)
+	requestURL := fmt.Sprintf("%s/api/hub/registry/core", c.registryUri)
 	err := c.http.GetUnmarshal(requestURL, http.StatusOK, &rtn)
 	return rtn, err
 }
